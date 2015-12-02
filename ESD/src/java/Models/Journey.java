@@ -36,7 +36,7 @@ public class Journey {
     private String DriversRegistration;
     private Date Date;
     private Time Time;
-    private int JourneyPrice;
+    private double JourneyPrice;
 
     // <editor-fold desc="Constructor">
     public Journey() {
@@ -140,20 +140,20 @@ public class Journey {
         this.Time = Time;
     }
 
-    public int getJourneyPrice() {
+    public double getJourneyPrice() {
         return JourneyPrice;
     }
 
-    private void setJourneyPrice(int price) {
+    private void setJourneyPrice(double price) {
         this.JourneyPrice = price;
     }
 
     // </editor-fold>
     // <editor-fold desc="GetDetail">
-    public void calculatePricing(int distance) {
-        Price p = new Price(distance);
+    public void calculatePricing(int distance) throws SQLException, ClassNotFoundException {
+        Price p = new Price();
         p = p.GetDetail();
-        setJourneyPrice(p.getPrice());
+        setJourneyPrice(p.GetPrice(distance));
     }
 
     public Journey GetDetail() {

@@ -27,7 +27,7 @@ public class Price {
 
     private int ID;
     private int Distance;
-    private int Price;
+    private double Price;
 
     // <editor-fold desc="Constructor">
     public Price() {
@@ -39,9 +39,9 @@ public class Price {
         GetDetail();
     }
 
-    public Price(int distance, int name, int price) {
-        this.ID = distance;
-        this.Distance = name;
+    public Price(int priceID, int distance, double price) {
+        this.ID = priceID;
+        this.Distance = distance;
         this.Price = price;
     }
 
@@ -61,11 +61,11 @@ public class Price {
         this.Distance = Distance;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return Price;
     }
 
-    public void setPrice(int Price) {
+    public void setPrice(double Price) {
         this.Price = Price;
     }
 
@@ -268,13 +268,13 @@ public class Price {
 
                 int distance = -1;
                 int priceID = -1;
-                int price = -1;
+                double price = -1;
 
                 while (rs.next()) {
-                    distance = rs.getInt("Registration");
-                    priceID = rs.getInt("Name");
-                    price = rs.getInt("password");
-                    Price d = new Price(distance, priceID, price);
+                    distance = rs.getInt("Distance");
+                    priceID = rs.getInt("PriceListID");
+                    price = rs.getDouble("Price");
+                    Price d = new Price(priceID, distance, price);
                     results.add(d);
                 }
 
@@ -407,31 +407,7 @@ public class Price {
     }
 
     public String GetListQuery() {
-
-//        int distance = getDistance();
-//        int priceID = getID();
-//        int price= getPrice();
-//
-//        if (distance != null) {
-//        } else {
-//            distance = "";
-//        }
-//        if (priceID != null) {
-//        } else {
-//            priceID = "";
-//        }
-//        if (price != null) {
-//        } else {
-//            price= "";
-//        }
-//
-//        String query = "";
-//        query = query + "SELECT * FROM Drivers";
-//        query = query + " WHERE Registration LIKE '%" + distance + "%'";
-//        query = query + " AND Name LIKE '%" + priceID + "%'";
-//        query = query + " AND password LIKE '%" + price+ "%';";
-        //return query;
-        return "";
+        return "SELECT * FROM PriceList ORDER BY Distance;";
     }
 
     public String GetWriteToDBQuery() {

@@ -14,10 +14,32 @@
     </head>
     <body>
         <h1>Change Distance Price</h1>
-        
-        <br></br>
-        <form method="post" action="CustomersListController">
+
+        <form method="post" action="ChangeDistancePriceController">
+            Change prices for journeys between
+            <input type="text" placeholder="min" name="minDist" width="25px"> miles and <input type="text" width="15px" placeholder="max" name="maxDist"> miles by £<input type="text" placeholder="price alteration" name="priceAlter">
+            <br/><input value="submit dat shit" type="submit"><hr/>
+
+
+
+
+            <table><thead><th>Distance (miles)</th><th>Price (£)</th></thead>
+                <tbody>
+                    <c:forEach items="${prices}" var="price">
+                        <tr>
+                            <td>${price.getDistance()}</td>
+                            <td>${price.getPrice()}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody></table>
+            <br/><br/><br/><br/><br/><br/><br/>
+
+        </form>
+
+        <form method="get" action="ChangeDistancePriceController">
+
             <input type="submit" value="<- Back" name="backBtn"/>
+
         </form>
     </body>
 </html>
