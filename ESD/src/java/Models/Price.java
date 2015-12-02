@@ -33,7 +33,15 @@ public class Price {
 
     }
 
-    public Price(int distance) {
+    public Price(int distance) throws SQLException, ClassNotFoundException {
+        int max_distance = GetMaxDistance();
+
+        double price = -1.0;
+
+        if (distance > max_distance) {
+            distance = max_distance;
+        }
+        
         this.Distance = distance;
         GetDetail();
     }
@@ -68,7 +76,7 @@ public class Price {
         this.Price = Price;
     }
 
-    public double GetPrice(int distance) throws SQLException, ClassNotFoundException {
+    public double CalculatePrice(int distance) throws SQLException, ClassNotFoundException {
         int max_distance = GetMaxDistance();
 
         double price = -1.0;
@@ -77,7 +85,7 @@ public class Price {
             distance = max_distance;
         }
 
-        String query = GetPriceQuery(distance);
+        String query = CalculatePriceQuery(distance);
 
         Connection con;
         Statement state;
@@ -190,7 +198,7 @@ public class Price {
 
     // </editor-fold>
     // <editor-fold desc="GetDetail">
-    public Price GetDetail() {
+    public void GetDetail() {
         if (!"".equals(getDistance())) {
             Connection con;
             Statement state;
@@ -226,19 +234,15 @@ public class Price {
                     con.close();
 
                     if (rowCount == 1) {
-                        return new Price(distance, priceID, price);
-                    } else {
-                        return new Price();
+                        setDistance(distance);
+                        setPrice(priceID);
+                        setPrice(price);
                     }
-                } else {
-                    return new Price();
                 }
-
             } catch (Exception e) {
                 System.err.println("Error: " + e);
             }//tryerrr
         }
-        return new Price();
     }
 
     // </editor-fold>
@@ -390,17 +394,12 @@ public class Price {
     // </editor-fold>
     // <editor-fold desc="DB">
 
-//    public String GetLogInQuery(String username, String password) {
-//        String query = "SELECT * FROM Drivers WHERE Registration = '" + username + "' AND password = '" + password + "';";
-//        return query;
-//    }
-
     public String GetMaxDistanceQuery() {
         String query = "SELECT * FROM PriceList ORDER BY Distance DESC;";
         return query;
     }
 
-    public String GetPriceQuery(int distance) {
+    public String CalculatePriceQuery(int distance) {
         String query = "SELECT * FROM PriceList WHERE Distance = " + distance + ";";
         return query;
     }
@@ -505,65 +504,9 @@ public class Price {
 
         int distance = getDistance();
 
-        String query = "";
-
-        query = query + "SELECT * FROM PriceList";
-        query = query + " WHERE Distance = '" + distance + "';";
+        String query = "SELECT * FROM PriceList WHERE Distance = " + distance + ";";
 
         return query;
     }
     // </editor-fold>
-    // <editor-fold desc="Custom">
-//    public boolean LogIn() {
-//
-//        Connection con;
-//        Statement state;
-//        ResultSet rs;
-//
-//        Properties p;
-//        p = new Properties();
-//
-//        try {
-//
-//            Class.forName(p.Driver());
-//            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-//            state = con.createStatement();
-//            String query = GetLogInQuery(getRegistration(), getPassword());
-//            if (query.length() > 0) {
-//
-//                rs = state.executeQuery(query);
-//
-//                String distance = "";
-//                String priceID = "";
-//                String pass = "";
-//                int rowCount = 0;
-//
-//                while (rs.next()) {
-//                    rowCount = rowCount + 1;
-//                    distance = rs.getString("Registration");
-//                    priceID = rs.getString("Name");
-//                    pass = rs.getString("password");
-//                }
-//
-//                rs.close();
-//                state.close();
-//                con.close();
-//
-//                if (rowCount == 1) {
-//                    return true;//new Price(distance, name, pass);
-//                } else {
-//                    return false;//new Price();
-//                }
-//            } else {
-//                return false;//new Price();
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("Error: " + e);
-//            return false;//new Price();
-//        }//tryerrr
-//
-//    }
-    // </editor-fold>
-
 }

@@ -130,8 +130,8 @@ public class Invoice {
                     Date = rs.getString("Date");
                     Distance = rs.getInt("Distance");
                     
-                    Price price = new Price();
-                    invoicePrice = price.GetPrice(Distance);
+                    Price price = new Price(Distance);
+                    invoicePrice = price.getPrice();
                     
                 }
 
