@@ -15,7 +15,7 @@
         <h1>Daily customers</h1>
         Number of customers served today: ${customersServed} 
         <br></br>
-        Today's turnover: ${turnover}
+        Today's turnover: £${turnover}
         
         <br></br>
         <form method="post" action="DailyReportController">

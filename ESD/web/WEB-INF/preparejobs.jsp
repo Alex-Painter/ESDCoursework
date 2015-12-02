@@ -48,14 +48,6 @@
             Invoices:<br/>                 
             <c:forEach items="${invoices}" var="invoice">
                 <span><b>Customer ID</b> : ${invoice.getCustomerID()}</span><br/>
-                <span><b>Customer Name</b> : ${invoice.getCustomerName()}</span><br/>
-                <span><b>Driver Name</b> : ${invoice.getDriverName()}</span><br/>
-                <span><b>Driver Registration</b> : ${invoice.getDriverRegistration()}</span><br/>
-                <span><b>Pickup</b> : ${invoice.getPickup()}</span><br/>
-                <span><b>Dropoff</b> : ${invoice.getDropoff()}</span><br/>
-                <span><b>Time</b> : ${invoice.getTime()}</span><br/>
-                <span><b>Date</b> : ${invoice.getDate()}</span><br/>
-                <span><b>Distance</b> : ${invoice.getDistance()} miles</span><br/>
                 <span><b>Price</b> : £${invoice.getPrice()}</span><br/><br/>
             </c:forEach>
         </form>
