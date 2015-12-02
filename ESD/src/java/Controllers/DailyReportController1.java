@@ -5,8 +5,8 @@
  */
 package Controllers;
 
-import Models.Databases.*;
 import Models.Driver;
+import Models.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -23,24 +23,31 @@ import javax.servlet.http.HttpServletResponse;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-public class ReportController extends HttpServlet {
-    public ReportController() {
+public class DailyReportController1 extends HttpServlet {
+    public DailyReportController1() {
         super();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArrayList<DatabaseTables> tableEntries;
+        ArrayList<Journey> journeys;
         
-        DatabaseTables DB = new GenericJourney();
+        Journey j = new Journey();
+        ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
+        journeys = j.ListByDate();
+        ArrayList<Integer> iterations = new ArrayList<Integer>();
         
-        tableEntries = DB.List();
-        System.out.println(tableEntries.get(0).getEntry().get(0));
-        System.out.println(tableEntries.get(0).getEntry().get(1));
-        System.out.println(tableEntries.get(0).getEntry().get(2));
-        
-        request.setAttribute("table", tableEntries);
-        getServletContext().getRequestDispatcher("/WEB-INF/TableList.jsp").forward(request, response);
+        int index = 0;
+        for (Journey journey : journeys) {
+            Customer c = new Customer(journey.getID());
+            c = c.GetDetail();
+            dailyCustomers.add(c);
+            iterations.add(index);
+            journey.calculatePricing(journey.getDistance());
+            index++;
+        }
+                
+        getServletContext().getRequestDispatcher("/WEB-INF/dailyReport.jsp").forward(request, response);
     }
     
     

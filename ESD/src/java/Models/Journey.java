@@ -628,7 +628,7 @@ public class Journey {
         int id = getID();
         String query = "";
 
-        query = "SELECT * FROM `Journey` WHERE Date='2015-10-14';";
+        query = "SELECT * FROM Journey WHERE Date='2015-12-02';";
         return query;
     }
     // </editor-fold>
