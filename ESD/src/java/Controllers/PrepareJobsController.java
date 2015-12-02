@@ -88,9 +88,7 @@ public class PrepareJobsController extends HttpServlet {
                 c.setName(custName);
                 c.setAddress(custAddr);
                 c.WriteToDB();
-                
-               
-                
+                                
                 c = c.GetDetailByNameAndAddress();
                 int customerID = c.getID();
 

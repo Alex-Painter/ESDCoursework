@@ -10,6 +10,7 @@ import Database.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -22,7 +23,6 @@ import java.util.ArrayList;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 public class Price {
 
     private int ID;
@@ -44,11 +44,11 @@ public class Price {
         this.Distance = name;
         this.Price = price;
     }
-    
+
     public int getID() {
         return ID;
     }
-               
+
     public void setID(int ID) {
         this.ID = ID;
     }
@@ -69,6 +69,95 @@ public class Price {
         this.Price = Price;
     }
 
+    public double GetPrice(int distance) throws SQLException, ClassNotFoundException {
+        int max_distance = GetMaxDistance();
+
+        double price = -1.0;
+
+        if (distance > max_distance) {
+            distance = max_distance;
+        }
+
+        String query = GetPriceQuery(distance);
+
+        Connection con;
+        Statement state;
+        ResultSet rs;
+
+        Properties p;
+        p = new Properties();
+
+        Class.forName(p.Driver());
+        con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+        state = con.createStatement();
+
+        if (query.length() > 0) {
+
+            rs = state.executeQuery(query);
+
+            int rowCount = 0;
+
+            while (rs.next()) {
+                rowCount = rowCount + 1;
+                price = rs.getDouble("Price");
+            }
+
+            rs.close();
+            state.close();
+            con.close();
+
+        }
+
+        return price;
+
+    }
+
+    public int GetMaxDistance() throws SQLException, ClassNotFoundException {
+
+        int distance = 0;
+        String query = GetMaxDistanceQuery();
+
+        Connection con;
+        Statement state;
+        ResultSet rs;
+
+        Properties p;
+        p = new Properties();
+
+        Class.forName(p.Driver());
+        con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+        state = con.createStatement();
+
+        if (query.length() > 0) {
+
+            rs = state.executeQuery(query);
+
+            int rowCount = 0;
+
+            while (rs.next()) {
+                rowCount = rowCount + 1;
+                distance = rs.getInt("Distance");
+                if (rowCount == 1) {
+                    rs.close();
+                    state.close();
+                    con.close();
+                    return distance;
+                }
+            }
+
+            rs.close();
+            if (rowCount == 1) {
+                state.close();
+                con.close();
+                return distance;
+            }
+        }
+
+        state.close();
+        con.close();
+        return distance;
+
+    }
 
     // </editor-fold>
     // <editor-fold desc="GetDetail">
@@ -181,9 +270,8 @@ public class Price {
 
         Properties p;
         p = new Properties();
-        
+
         boolean result = false;
-        
 
         try {
 
@@ -193,9 +281,9 @@ public class Price {
             String query = GetWriteToDBQuery();
 
             state.executeUpdate(query);
-            
+
             result = true;
-            
+
             state.close();
             con.close();
 
@@ -278,6 +366,16 @@ public class Price {
         return query;
     }
 
+    public String GetMaxDistanceQuery() {
+        String query = "SELECT * FROM PriceList ORDER BY Distance DESC;";
+        return query;
+    }
+
+    public String GetPriceQuery(int distance) {
+        String query = "SELECT * FROM PriceList WHERE Distance = " + distance + ";";
+        return query;
+    }
+
     public String GetListQuery() {
 
 //        int distance = getDistance();
@@ -302,7 +400,6 @@ public class Price {
 //        query = query + " WHERE Registration LIKE '%" + distance + "%'";
 //        query = query + " AND Name LIKE '%" + priceID + "%'";
 //        query = query + " AND password LIKE '%" + price+ "%';";
-
         //return query;
         return "";
     }
@@ -332,7 +429,6 @@ public class Price {
 //        query = query + " (Registration, Name, password)";
 //        query = query + " VALUES";
 //        query = query + " ('" + distance + "','" + priceID + "','" + price+ "');";
-
         //return query;
         return "";
 
@@ -362,7 +458,6 @@ public class Price {
 //        query = query + "UPDATE Drivers";
 //        query = query + " SET Registration = '" + distance + "', Name = '" + priceID + "', password = '" + price + "'";
 //        query = query + " WHERE Registration = '" + distance + "';";
-
         //return query;
         return "";
 

@@ -25,7 +25,8 @@ public class Invoice {
     public String Dropoff;
     public String Time;
     public String Date;
-    public int Price;
+    public int Distance;
+    public double Price;
 
     public int getCustomerID() {
         return CustomerID;
@@ -59,11 +60,15 @@ public class Invoice {
         return Date;
     }
 
-    public int getPrice() {
+    public int getDistance() {
+        return Distance;
+    }
+
+    public double getPrice() {
         return Price;
     }
 
-    public Invoice(int CustomerID, String CustomerName, String DriverRegistration, String DriverName, String Pickup, String Dropoff, String Time, String Date, int Price) {
+    public Invoice(int CustomerID, String CustomerName, String DriverRegistration, String DriverName, String Pickup, String Dropoff, String Time, String Date, int Distance, double Price) {
         this.CustomerID = CustomerID;
         this.CustomerName = CustomerName;
         this.DriverRegistration = DriverRegistration;
@@ -72,13 +77,15 @@ public class Invoice {
         this.Dropoff = Dropoff;
         this.Time = Time;
         this.Date = Date;
+        this.Distance = Distance;
         this.Price = Price;
     }
 
-
     public Invoice() {
-
     }
+
+
+    
 
     public Invoice GetInvoice(int JourneyID) {
         Connection con;
@@ -106,7 +113,8 @@ public class Invoice {
                 String Dropoff = "";
                 String Time = "";
                 String Date = "";
-                int Price = -1;
+                int Distance = -1;
+                double invoicePrice = -1.0;
                 
                 int rowCount = 0;
 
@@ -120,7 +128,11 @@ public class Invoice {
                     Dropoff = rs.getString("Dropoff");
                     Time = rs.getString("Time");
                     Date = rs.getString("Date");
-                    Price = rs.getInt("Price");
+                    Distance = rs.getInt("Distance");
+                    
+                    Price price = new Price();
+                    invoicePrice = price.GetPrice(Distance);
+                    
                 }
 
                 rs.close();
@@ -130,7 +142,7 @@ public class Invoice {
                 con.close();
 
                 if (rowCount == 1) {
-                    return new Invoice(CustomerID, CustomerName, DriverRegistration, DriverName, Pickup, Dropoff, Time, Date, Price);
+                    return new Invoice(CustomerID, CustomerName, DriverRegistration, DriverName, Pickup, Dropoff, Time, Date, Distance, invoicePrice);
                 }
             }
 
@@ -151,13 +163,16 @@ public class Invoice {
                 + "`Journey`.`Destination` as `Dropoff`,\n"
                 + "`Journey`.`Time` as `Time`,\n"
                 + "`Journey`.`Date` as `Date`,\n"
-                + "`Journey`.`Distance` as `Price`\n"
+                //+ "`PriceList`.`Price` as `Price`,\n"
+                + "`Journey`.`Distance` as `Distance`\n"
                 + "\n"
                 + "FROM `Journey`\n"
                 + "INNER JOIN `Customer`\n"
                 + "ON `Customer`.`id` = `Journey`.`Customer.id`\n"
                 + "INNER JOIN `Drivers`\n"
                 + "ON `Drivers`.`Registration` = `Journey`.`Drivers.Registration`\n"
+                //+ "INNER JOIN `PriceList`\n"
+                //+ "ON `PriceList`.`Distance` = `Journey`.`Distance`\n"
                 + "WHERE `Journey`.`id` = " + JourneyID + ";";
 
         return query;
