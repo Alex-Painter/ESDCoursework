@@ -5,6 +5,7 @@
  */
 package Controllers;
 
+import Models.Customer;
 import Models.Demand;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -96,6 +97,11 @@ public class BookingController extends HttpServlet {
         demand.setStatus("Outstanding");
 
         demand.addBooking();
+        
+        Customer newCustomer = new Customer();
+        newCustomer.setName(name);
+        newCustomer.setAddress(address);
+        newCustomer.WriteToDB();
 
         Demand de;
         HttpSession session = request.getSession();
