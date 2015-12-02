@@ -8,6 +8,7 @@ package Models;
 import Database.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ public class Customer {
 
         return new Customer();
     }
+
     public Customer GetDetailByNameAndAddress() {
 
         Connection con;
@@ -218,34 +220,28 @@ public class Customer {
 
     // </editor-fold>
     // <editor-fold desc="WriteToDB">
-    public boolean WriteToDB() {
-
-        Connection con;
-        Statement state;
-
-        Properties p;
-        p = new Properties();
-
-        boolean result = false;
-
+    public void WriteToDB() {
+        int id = -1;
         try {
-
+            Properties p;
+            p = new Properties();
             Class.forName(p.Driver());
-            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-            state = con.createStatement();
+            Connection con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             String query = GetWriteToDBQuery();
+            PreparedStatement state = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            int affectedRows = state.executeUpdate();
 
-            state.executeUpdate(query);
-
-            result = true;
-
+            if (affectedRows == 1) {
+                ResultSet genKeys = state.getGeneratedKeys();
+                if (genKeys.next()) {
+                    id = genKeys.getInt(1);
+                }
+            }
             state.close();
             con.close();
-
         } catch (Exception e) {
-            System.err.println("Error: " + e);
-        };
-        return result;
+        }
+        this.setID(id);
     }
 
     // </editor-fold>
@@ -427,5 +423,4 @@ public class Customer {
     }
 
     // </editor-fold>
-
 }

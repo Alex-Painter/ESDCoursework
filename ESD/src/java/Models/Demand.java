@@ -105,23 +105,27 @@ public class Demand {
     }
 
     public void addBooking() {
-        Connection con;
-        Statement state;
-
-        Properties p = new Properties();
-
+        int id = -1;
         try {
+            Properties p = new Properties();
             Class.forName(p.Driver());
-            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-            state = con.createStatement();
+            Connection con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             String query = getInsertQuery();
+            PreparedStatement state = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            int affectedRows = state.executeUpdate();
 
-            state.executeUpdate(query);
+            if (affectedRows == 1) {
+                ResultSet genKeys = state.getGeneratedKeys();
+                if (genKeys.next()) {
+                    id = genKeys.getInt(1);
+                }
+            }
             state.close();
             con.close();
         } catch (Exception e) {
+            System.out.println(e);
         }
-
+        this.setId(id);
     }
 
     public Demand GetDetail() {
@@ -232,7 +236,6 @@ public class Demand {
 
     public boolean Delete() {
 
-        
         Connection con;
         Statement state;
 

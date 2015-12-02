@@ -7,6 +7,7 @@ package Controllers;
 
 import Models.Customer;
 import Models.Demand;
+import Models.Invoice;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -68,17 +69,10 @@ public class BookingController extends HttpServlet {
             } catch (ParseException ex) {
                 System.out.println(ex);
             }
-
-            /*
-             Create SQL Date object from String
-             */
             /*
              Create SQL Time object from String
              */
-            SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-
-            //time.valueOf(timeStr);
-            
+            SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");            
             try {
                 
                 long ms = sdfTime.parse(timeStr).getTime();
@@ -87,9 +81,6 @@ public class BookingController extends HttpServlet {
                 System.out.println(ex);
             }
 
-            /*
-             Create SQL Time object from String
-             */
             demand.setDate(date);
             demand.setTime(time);
         }
@@ -98,11 +89,24 @@ public class BookingController extends HttpServlet {
 
         demand.addBooking();
         
+        /*
+        Create new Customer in db
+        */
+               
         Customer newCustomer = new Customer();
         newCustomer.setName(name);
         newCustomer.setAddress(address);
         newCustomer.WriteToDB();
 
+        /*
+        Create new Invoice in db
+        */
+        
+        Invoice newInvoice = new Invoice();
+        newInvoice.setCustomerID(newCustomer.getID());
+        newInvoice.setDemandID(demand.getId());
+        newInvoice.WriteToDB();
+        
         Demand de;
         HttpSession session = request.getSession();
 

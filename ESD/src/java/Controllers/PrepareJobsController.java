@@ -10,6 +10,7 @@ import Models.Demand;
 import Models.Driver;
 import Models.Invoice;
 import Models.Journey;
+import Models.Price;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -76,30 +77,21 @@ public class PrepareJobsController extends HttpServlet {
 
                 d.setId(demandId);
                 d = d.GetDetail();
-                String pickup = d.getAddress();
+                String address = d.getAddress();
                 String destination = d.getDestination();
                 Journey j2 = new Journey();
-                int distance = j2.getDistance(pickup, destination);
-
-                //create new customer
-                String custNameName = "CustomerName" + Integer.toString(demandId);
-                String custAddrName = "CustomerAddress" + Integer.toString(demandId);
-                String custName = request.getParameter(custNameName);
-                String custAddr = request.getParameter(custAddrName);
-                Customer c = new Customer();
-                c.setName(custName);
-                c.setAddress(custAddr);
-                c.WriteToDB();
-                                
-                c = c.GetDetailByNameAndAddress();
-                int customerID = c.getID();
-
+                int distance = j2.getDistance(address, destination);
+                
                 String driversRegistration = driverReg;
                 Date date = d.getDate();
                 Time time = d.getTime();
-                
+
+                Invoice tempInv = new Invoice();
+                tempInv.GetInvoiceFromDemandID(demandId);
+                int customerID = tempInv.getCustomerID();
 
                 Journey j = new Journey(destination, distance, customerID, driversRegistration, date, time);
+                Price tempPrice = new Price();
 
                 int jID = -1;
                 try {
@@ -108,12 +100,15 @@ public class PrepareJobsController extends HttpServlet {
                     Logger.getLogger(PrepareJobsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                Invoice invoice = new Invoice();
-                invoice = invoice.GetInvoice(jID);
-                invoices.add(invoice);
-
-                d.Delete();
-
+                try {
+                    tempInv.setPrice(tempPrice.GetPrice(distance));
+                    tempInv.setConfirmed(true);
+                    tempInv.Update();
+                    d.setStatus("Confirmed");
+                    invoices.add(tempInv);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
         }
 
@@ -133,7 +128,7 @@ public class PrepareJobsController extends HttpServlet {
         ArrayList<Journey> journeys = new ArrayList<Journey>();//dem.List();
         journeys = journ.List();
         request.setAttribute("journeys", journeys);
-        
+
         //request.setAttribute("test", drivers.size());
         getServletContext().getRequestDispatcher("/WEB-INF/preparejobs.jsp").forward(request, response);
     }

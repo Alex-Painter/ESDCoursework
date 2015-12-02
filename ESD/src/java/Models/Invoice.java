@@ -17,75 +17,73 @@ import java.sql.Statement;
  */
 public class Invoice {
 
-    public int CustomerID;
-    public String CustomerName;
-    public String DriverRegistration;
-    public String DriverName;
-    public String Pickup;
-    public String Dropoff;
-    public String Time;
-    public String Date;
-    public int Distance;
-    public double Price;
+    private int CustomerID;
+    private int DemandID;
+    private double Price;
+    private Boolean Confirmed;
+
+    public Invoice(int CustomerID, int DemandID, double Price) {
+        this.CustomerID = CustomerID;
+        this.CustomerID = DemandID;
+        this.Price = Price;
+        this.Confirmed = false;
+    }
+
+    public Invoice() {
+        this.Confirmed = false;
+    }
 
     public int getCustomerID() {
         return CustomerID;
-    }
-
-    public String getCustomerName() {
-        return CustomerName;
-    }
-
-    public String getDriverRegistration() {
-        return DriverRegistration;
-    }
-
-    public String getDriverName() {
-        return DriverName;
-    }
-
-    public String getPickup() {
-        return Pickup;
-    }
-
-    public String getDropoff() {
-        return Dropoff;
-    }
-
-    public String getTime() {
-        return Time;
-    }
-
-    public String getDate() {
-        return Date;
-    }
-
-    public int getDistance() {
-        return Distance;
     }
 
     public double getPrice() {
         return Price;
     }
 
-    public Invoice(int CustomerID, String CustomerName, String DriverRegistration, String DriverName, String Pickup, String Dropoff, String Time, String Date, int Distance, double Price) {
+    public void setCustomerID(int CustomerID) {
         this.CustomerID = CustomerID;
-        this.CustomerName = CustomerName;
-        this.DriverRegistration = DriverRegistration;
-        this.DriverName = DriverName;
-        this.Pickup = Pickup;
-        this.Dropoff = Dropoff;
-        this.Time = Time;
-        this.Date = Date;
-        this.Distance = Distance;
+    }
+
+    public void setPrice(double Price) {
         this.Price = Price;
     }
 
-    public Invoice() {
+    public int getDemandID() {
+        return DemandID;
     }
 
+    public void setDemandID(int DemandID) {
+        this.DemandID = DemandID;
+    }
 
-    
+    public Boolean getConfirmed() {
+        return Confirmed;
+    }
+
+    public void setConfirmed(Boolean Confirmed) {
+        this.Confirmed = Confirmed;
+    }
+
+    public void WriteToDB() {
+        Connection con;
+        Statement state;
+
+        Properties p = new Properties();
+
+        try {
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = getInsertQuery();
+
+            state.executeUpdate(query);
+            state.close();
+            con.close();
+        } catch (Exception e) {
+        }
+
+    }
 
     public Invoice GetInvoice(int JourneyID) {
         Connection con;
@@ -106,33 +104,19 @@ public class Invoice {
                 rs = state.executeQuery(query);
 
                 int CustomerID = -1;
-                String CustomerName = "";
-                String DriverRegistration = "";
-                String DriverName = "";
-                String Pickup = "";
-                String Dropoff = "";
-                String Time = "";
-                String Date = "";
+                int DemandID = 0;
                 int Distance = -1;
                 double invoicePrice = -1.0;
-                
+
                 int rowCount = 0;
 
                 while (rs.next()) {
                     rowCount = rowCount + 1;
                     CustomerID = rs.getInt("CustomerID");
-                    CustomerName = rs.getString("CustomerName");
-                    DriverRegistration = rs.getString("DriverRegistration");
-                    DriverName = rs.getString("DriverName");
-                    Pickup = rs.getString("Pickup");
-                    Dropoff = rs.getString("Dropoff");
-                    Time = rs.getString("Time");
-                    Date = rs.getString("Date");
                     Distance = rs.getInt("Distance");
-                    
                     Price price = new Price();
                     invoicePrice = price.GetPrice(Distance);
-                    
+
                 }
 
                 rs.close();
@@ -142,7 +126,7 @@ public class Invoice {
                 con.close();
 
                 if (rowCount == 1) {
-                    return new Invoice(CustomerID, CustomerName, DriverRegistration, DriverName, Pickup, Dropoff, Time, Date, Distance, invoicePrice);
+                    return new Invoice(CustomerID, DemandID, invoicePrice);
                 }
             }
 
@@ -150,6 +134,107 @@ public class Invoice {
             System.err.println("Error: " + e);
         }//tryerrr
         return null;
+    }
+
+    public void GetInvoiceFromDemandID(int DemandID) {
+        Connection con;
+        Statement state;
+        ResultSet rs;
+
+        Properties p;
+        p = new Properties();
+
+        try {
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetInvoiceFromDemandIDQ(DemandID);
+            if (query.length() > 0) {
+
+                rs = state.executeQuery(query);
+
+                int customerID = -1;
+                int demandID = 0;
+                double price = -1.0;
+
+                int rowCount = 0;
+                while (rs.next()) {
+                    rowCount = rowCount + 1;
+                    customerID = rs.getInt("CustomerID");
+                    demandID = rs.getInt("DemandID");
+                    price = rs.getDouble("Price");
+
+                }
+                rs.close();
+                state.close();
+                con.close();
+                if (rowCount == 1) {
+                    this.setCustomerID(customerID);
+                    this.setDemandID(demandID);
+                    this.setPrice(price);
+                    //this.setConfirmed(confirmed);
+                    //return new Invoice(customerID, demandID, price);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }//tryerrr
+        //return null;
+    }
+
+    public boolean Update() {
+        Connection con;
+        Statement state;
+        Properties p;
+        p = new Properties();
+
+        try {
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetUpdateQuery();
+            
+            if (!"".equals(query)) {
+                state.executeUpdate(query);
+                state.close();
+                con.close();
+                return true;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }
+        return false;
+    }
+
+    private String getInsertQuery() {
+        String query = "";
+
+        int customerID = getCustomerID();
+        int demandID = getDemandID();
+        double price = getPrice();
+        Boolean confirmed = getConfirmed();
+
+        query = query + "INSERT INTO Invoices ";
+        query = query + " (`CustomerID`, `DemandID`, `Price`, `Confirmed`)";
+        query = query + " VALUES";
+        query = query + " (" + customerID + "," + demandID + "," + price + ""
+                + "," + confirmed + ");";
+
+        return query;
+    }
+
+    public String GetUpdateQuery() {
+        int customerID = getCustomerID();
+        double price = getPrice();
+        Boolean confirmed = getConfirmed();
+
+        String query = "";
+        query = query + "UPDATE Invoices";
+        query = query + " SET Price = `" + price + "`, Confirmed = " + confirmed + "";
+        query = query + " WHERE CustomerID = '" + customerID + "';";
+
+        return query;
     }
 
     public String GetQuery(int JourneyID) {
@@ -174,6 +259,15 @@ public class Invoice {
                 //+ "INNER JOIN `PriceList`\n"
                 //+ "ON `PriceList`.`Distance` = `Journey`.`Distance`\n"
                 + "WHERE `Journey`.`id` = " + JourneyID + ";";
+
+        return query;
+    }
+
+    public String GetInvoiceFromDemandIDQ(int DemandID) {
+
+        String query = "";
+        query = "SELECT * FROM `Invoices` "
+                + "WHERE `DemandID` = " + DemandID + ";";
 
         return query;
     }
