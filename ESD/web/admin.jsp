@@ -21,7 +21,7 @@
             <li><a href="DailyReportController">Daily Report [4] Hakon</a></li>
             <li><a href="DailyCustomerController">List Daily Customers [5] Hakon</a></li>
             <li><a href="#">Create Customer Invoice [8] Tom</a></li>
-            <li><a href="#">Change Destination Price [10]</a></li>
+            <li><a href="ChangeDistancePriceController">Change Destination Price [10]</a></li>
         </ul>
     </body>
 </html>
