@@ -14,7 +14,7 @@
         <title>Today's Customers</title>
     </head>
     <body>
-        <h1>Daily customers</h1>
+        <h1>Today's Customers</h1>
         
         <table border="1px">
             <tr>
@@ -31,6 +31,10 @@
                         <td>${journeys.get(iteration).getJourneyPrice()}</td>
                 </tr>      
             </c:forEach>
-        </table>   
+        </table> 
+        <br></br>
+        <form method="post" action="DailyCustomerController">
+            <input type="submit" value="<- Back" name="backBtn"/>
+        </form>
     </body>
 </html>
