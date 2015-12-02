@@ -23,20 +23,21 @@ public class ChangeDistancePriceController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
-        Parent.CheckLoggedIn(request, response);
 
-        if (request.getParameter("backBtn") != null) {
-            response.sendRedirect("/admin.jsp");
-        } else {
-            ArrayList<Price> prices = new ArrayList<Price>();
-            Price price = new Price();
-            prices = price.List();
+        if (Parent.CheckLoggedIn(request, response)) {
 
-            request.setAttribute("prices", prices);
+            if (request.getParameter("backBtn") != null) {
+                response.sendRedirect("/admin.jsp");
+            } else {
+                ArrayList<Price> prices = new ArrayList<Price>();
+                Price price = new Price();
+                prices = price.List();
 
-            getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
+                request.setAttribute("prices", prices);
 
+                getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
+
+            }
         }
 
     }
@@ -44,30 +45,44 @@ public class ChangeDistancePriceController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Parent.CheckLoggedIn(request, response);
+        if (Parent.CheckLoggedIn(request, response)) {
 
-        Object minDistObj = request.getParameter("minDist");
-        Object maxDistObj = request.getParameter("maxDist");
-        Object priceAlterObj = request.getParameter("priceAlter");
+            Object minDistObj = request.getParameter("minDist");
+            Object maxDistObj = request.getParameter("maxDist");
+            Object priceAlterObj = request.getParameter("priceAlter");
 
-        String minDistStr = minDistObj.toString();
-        String maxDistStr = maxDistObj.toString();
-        String priceAlterStr = priceAlterObj.toString();
+            String minDistStr = minDistObj.toString();
+            String maxDistStr = maxDistObj.toString();
+            String priceAlterStr = priceAlterObj.toString();
 
-        int minDist = Integer.parseInt(minDistStr);
-        int maxDist = Integer.parseInt(maxDistStr);
-        double priceAlter = Double.parseDouble(priceAlterStr);
+            boolean minIsInt = minDistStr.matches("-?\\d+(\\.\\d+)?");
+            boolean maxIsInt = maxDistStr.matches("-?\\d+(\\.\\d+)?");
+            boolean prAlIsDbl = priceAlterStr.matches("([-]?)[0-9]+(\\.[0-9][0-9]?)?");
 
-        Price p = new Price();
+            int minDist = 0;
+            int maxDist = 999999;
+            double priceAlter = 0.0;
 
-        p.ChangeDistancePrice(minDist, maxDist, priceAlter);
+            if (prAlIsDbl) {
+                if (minIsInt) {
+                    minDist = Integer.parseInt(minDistStr);
+                }
+                if (maxIsInt) {
+                    maxDist = Integer.parseInt(maxDistStr);
+                }
+                priceAlter = Double.parseDouble(priceAlterStr);
 
-        ArrayList<Price> prices = new ArrayList<Price>();
-        Price price = new Price();
-        prices = price.List();
+                Price p = new Price();
+                p.ChangeDistancePrice(minDist, maxDist, priceAlter);
+            }
 
-        request.setAttribute("prices", prices);
+            ArrayList<Price> prices = new ArrayList<Price>();
+            Price price = new Price();
+            prices = price.List();
 
-        getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
+            request.setAttribute("prices", prices);
+
+            getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
+        }
     }
 }

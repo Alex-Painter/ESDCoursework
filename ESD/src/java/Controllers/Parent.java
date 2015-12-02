@@ -15,17 +15,18 @@ import javax.servlet.http.HttpSession;
  * @author t2-sheedy
  */
 public class Parent {
-    
+
     //Parent.CheckLoggedIn(request, response);
+    public static boolean CheckLoggedIn(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    public static void CheckLoggedIn(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+        boolean george = true;
         HttpSession session = request.getSession();
         if (session.getAttribute("id") == null) {
             //session.invalidate();            
             response.sendRedirect("login.jsp");
+            george = false;
         }
-
+        return george;
     }
 
 }
