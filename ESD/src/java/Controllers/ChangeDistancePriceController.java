@@ -26,18 +26,14 @@ public class ChangeDistancePriceController extends HttpServlet {
 
         if (Parent.CheckLoggedIn(request, response)) {
 
-            if (request.getParameter("backBtn") != null) {
-                response.sendRedirect("/admin.jsp");
-            } else {
-                ArrayList<Price> prices = new ArrayList<Price>();
-                Price price = new Price();
-                prices = price.List();
+            ArrayList<Price> prices = new ArrayList<Price>();
+            Price price = new Price();
+            prices = price.List();
 
-                request.setAttribute("prices", prices);
+            request.setAttribute("prices", prices);
 
-                getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
+            getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
 
-            }
         }
 
     }

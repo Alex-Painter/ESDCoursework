@@ -18,8 +18,6 @@
         Today's turnover: ${turnover}
         
         <br></br>
-        <form method="post" action="DailyReportController">
-            <input type="submit" value="<- Back" name="backBtn"/>
-        </form>
+            <a href="admin.jsp"><- Back</a>
     </body>
 </html>

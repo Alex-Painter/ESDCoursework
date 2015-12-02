@@ -37,22 +37,22 @@ public class DailyReportController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         java.sql.Date today = new java.sql.Date(1L);
         today = new Date(System.currentTimeMillis());
-        
-        ArrayList<Journey> journeys;
 
+        ArrayList<Journey> journeys;
+        int turnover = 0;
         Journey j = new Journey();
         journeys = j.ListByDate(today);
-        int turnover = 0;
 
-        for (Journey journey : journeys) {
-            try {
+        try {
+
+            for (Journey journey : journeys) {
                 journey.calculatePricing(journey.getDistance());
-            } catch (SQLException ex) {
-                Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
+                turnover += journey.getJourneyPrice();
             }
-            turnover += journey.getJourneyPrice();
+        } catch (SQLException ex) {
+            Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         request.setAttribute("customersServed", journeys.size());
@@ -61,10 +61,4 @@ public class DailyReportController extends HttpServlet {
         getServletContext().getRequestDispatcher("/WEB-INF/dailyReport.jsp").forward(request, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("backBtn") != null) {
-            response.sendRedirect("http://localhost:8080/ESD/admin.jsp");
-        }
-    }
 }

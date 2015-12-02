@@ -34,11 +34,7 @@
                 </tbody></table>
             <br/><br/><br/><br/><br/><br/><br/>
 
-        </form>
-
-        <form method="get" action="ChangeDistancePriceController">
-
-            <input type="submit" value="<- Back" name="backBtn"/>
+            <a href="admin.jsp"><- Back</a>
 
         </form>
     </body>

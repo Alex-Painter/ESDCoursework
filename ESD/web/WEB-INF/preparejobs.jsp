@@ -59,5 +59,8 @@
                 <span><b>Price</b> : £${invoice.getPrice()}</span><br/><br/>
             </c:forEach>
         </form>
+        
+        <br></br>
+        <a href="admin.jsp"><- Back</a>
     </body>
 </html>

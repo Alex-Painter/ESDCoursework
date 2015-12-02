@@ -33,8 +33,6 @@
             </c:forEach>
         </table> 
         <br></br>
-        <form method="post" action="DailyCustomerController">
-            <input type="submit" value="<- Back" name="backBtn"/>
-        </form>
+            <a href="admin.jsp"><- Back</a>
     </body>
 </html>
