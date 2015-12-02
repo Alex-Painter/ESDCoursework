@@ -5,11 +5,20 @@
  */
 package Models;
 
+import Database.XMLReader;
 import Database.Properties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -27,6 +36,7 @@ public class Journey {
     private String DriversRegistration;
     private Date Date;
     private Time Time;
+    private int JourneyPrice;
 
     // <editor-fold desc="Constructor">
     public Journey() {
@@ -79,8 +89,23 @@ public class Journey {
         return Distance;
     }
 
-    public void setDistance(int Distance) {
-        this.Distance = Distance;
+    public int getDistance(String start, String end) throws MalformedURLException, IOException {
+        try {
+
+            start = start.replace(" ", "%20");
+            end = end.replace(" ", "%20");
+
+            String Surl = "https://maps.googleapis.com/maps/api/distancematrix/xml?"
+                    + "origins=" + start
+                    + "&destinations=" + end;
+            XMLReader jason = null;
+            int o = jason.getDistance(Surl);
+
+            return o;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return -1;
     }
 
     public int getCustomerID() {
@@ -115,8 +140,22 @@ public class Journey {
         this.Time = Time;
     }
 
+    public int getJourneyPrice() {
+        return JourneyPrice;
+    }
+
+    private void setJourneyPrice(int price) {
+        this.JourneyPrice = price;
+    }
+
     // </editor-fold>
     // <editor-fold desc="GetDetail">
+    public void calculatePricing(int distance) {
+        Price p = new Price(distance);
+        p = p.GetDetail();
+        setJourneyPrice(p.getPrice());
+    }
+
     public Journey GetDetail() {
 
         Connection con;
@@ -227,15 +266,13 @@ public class Journey {
 
                 return results;
             }
-            
-            
 
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
         return results;
     }
-    
+
     public ArrayList<Journey> ListByDate() {
 
         ArrayList<Journey> results = new ArrayList<Journey>();
@@ -285,8 +322,6 @@ public class Journey {
 
                 return results;
             }
-            
-            
 
         } catch (Exception e) {
             System.err.println("Error: " + e);
@@ -296,36 +331,56 @@ public class Journey {
 
     // </editor-fold>
     // <editor-fold desc="WriteToDB">
-    public boolean WriteToDB() {
-
-        Connection con;
-        Statement state;
-
-        Properties p;
-        p = new Properties();
-
-        boolean result = false;
-
+    public int WriteToDB() throws SQLException {
+        int id = -1;
         try {
-
-            Class.forName(p.Driver());
-            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-            state = con.createStatement();
+            Properties p;
+            p = new Properties();
+            Connection connection = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             String query = GetWriteToDBQuery();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows == 1) {
+                ResultSet generatedKeys = statement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    id = (generatedKeys.getInt(1));
+                } else {
 
-            state.executeUpdate(query);
-
-            result = true;
-
-            state.close();
-            con.close();
-
+                }
+            }
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
-        return result;
+        return id;
     }
 
+//        Connection con;
+//        Statement state;
+//
+//        Properties p;
+//        p = new Properties();
+//
+//        boolean result = false;
+//
+//        try {
+//
+//            Class.forName(p.Driver());
+//            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+//            state = con.createStatement();
+//            String query = GetWriteToDBQuery();
+//
+//            state.executeUpdate(query);
+//
+//            result = true;
+//
+//            state.close();
+//            con.close();
+//
+//        } catch (Exception e) {
+//            System.err.println("Error: " + e);
+//        };
+//        return result;
+    //}
     // </editor-fold>
     // <editor-fold desc="Update">
     public boolean Update() {
@@ -569,11 +624,11 @@ public class Journey {
     }
 
     public String GetListByDateQuery() {
-        
+
         int id = getID();
         String query = "";
-        
-        query = "SELECT * FROM `Journey` WHERE Date='2015-10-14';";        
+
+        query = "SELECT * FROM `Journey` WHERE Date='2015-10-14';";
         return query;
     }
     // </editor-fold>
