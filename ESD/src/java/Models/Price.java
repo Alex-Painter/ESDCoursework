@@ -159,6 +159,36 @@ public class Price {
 
     }
 
+    public boolean ChangeDistancePrice(int minDistance, int maxDistance, double priceIncrease) {
+        Connection con;
+        Statement state;
+
+        Properties p;
+        p = new Properties();
+
+        try {
+
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetUpdateDistancePriceQuery(minDistance, maxDistance, priceIncrease);
+
+            if (!"".equals(query)) {
+
+                state.executeUpdate(query);
+
+                state.close();
+                con.close();
+
+                return true;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        };
+        return false;
+    }
+
     // </editor-fold>
     // <editor-fold desc="GetDetail">
     public Price GetDetail() {
@@ -434,6 +464,21 @@ public class Price {
 
     }
 
+    public String GetUpdateDistancePriceQuery(int minDistance, int maxDistance, double priceIncrease) {
+        String query = "";
+
+        query = ""
+                + "UPDATE `PriceList`\n"
+                + "\n"
+                + "SET `Price`=`Price` + " + priceIncrease + "\n"
+                + "\n"
+                + "WHERE `Distance` >= " + minDistance + " \n"
+                + "AND `Distance` <= " + maxDistance + ";";
+
+        return query;
+
+    }
+
     public String GetUpdateQuery() {
 
 //        String distance = getDistance();
@@ -547,5 +592,3 @@ public class Price {
     // </editor-fold>
 
 }
-    
-
