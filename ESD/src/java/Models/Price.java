@@ -5,7 +5,6 @@
  */
 package Models;
 
-import static Controllers.Authenticator.GetQuery;
 import Database.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -391,10 +390,10 @@ public class Price {
     // </editor-fold>
     // <editor-fold desc="DB">
 
-    public String GetLogInQuery(String username, String password) {
-        String query = "SELECT * FROM Drivers WHERE Registration = '" + username + "' AND password = '" + password + "';";
-        return query;
-    }
+//    public String GetLogInQuery(String username, String password) {
+//        String query = "SELECT * FROM Drivers WHERE Registration = '" + username + "' AND password = '" + password + "';";
+//        return query;
+//    }
 
     public String GetMaxDistanceQuery() {
         String query = "SELECT * FROM PriceList ORDER BY Distance DESC;";

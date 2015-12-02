@@ -13,7 +13,7 @@
     </head>
     <body>
         <form action="LoginController" method="post">
-            Username: <input type="text" name="username"><br>
+            Registration: <input type="text" name="registration"><br>
             Password: <input type="password" name="password"><br>
             <input type="submit" />
         </form>
