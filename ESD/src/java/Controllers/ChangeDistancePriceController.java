@@ -23,6 +23,8 @@ public class ChangeDistancePriceController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        Parent.CheckLoggedIn(request, response);
 
         if (request.getParameter("backBtn") != null) {
             response.sendRedirect("/admin.jsp");
@@ -41,6 +43,8 @@ public class ChangeDistancePriceController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        Parent.CheckLoggedIn(request, response);
 
         Object minDistObj = request.getParameter("minDist");
         Object maxDistObj = request.getParameter("maxDist");
