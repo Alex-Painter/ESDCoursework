@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : driversList
     Created on : 30-Nov-2015, 16:15:27
@@ -16,6 +17,9 @@
                     document.myform.submit();
                 }
             }
+            function showAddForm() {
+                document.getElementById('addPara').style.display = "block";
+            }
         </script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Drivers List</title>
@@ -24,9 +28,7 @@
     <body>
         <form action="DriversListController" name="myform" method="post">
             <h1>Drivers List</h1>
-
             <input id="deletedReg" name="deletedReg" type="hidden">
-
             <table border="1px">
                 <tr>
                     <td><b>Name</b></td>
@@ -40,8 +42,15 @@
                     </tr>
                 </c:forEach>
             </table>
+        </form><br><br>
 
-            <input type="submit" value="Add New" name="addBtn" onclick="DriversListController.addNew();" />
+        <h1>Add Driver</h1>
+        <input type="submit" value="Add New" name="addDriver" onclick="showAddForm()" />
+        <form style="display:none" id="addPara" method="post" action="DriversListController"> 
+            Registration: <input type="text" name="newRegistration" id="registration"><br>
+            Name: <input type="text" name="name" id="name"><br>
+            Password: <input type="password" name="password" id="password"><br>
+            <input type="submit" value="Add Driver">
         </form>
     </body>
 </html>
