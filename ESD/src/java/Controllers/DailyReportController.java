@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-public class DailyCustomerController1 extends HttpServlet {
-    public DailyCustomerController1() {
+public class DailyReportController extends HttpServlet {
+    public DailyReportController() {
         super();
     }
 
@@ -32,28 +32,22 @@ public class DailyCustomerController1 extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ArrayList<Journey> journeys;
         
-        int price = 0;
-        
         Journey j = new Journey();
         ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
         journeys = j.ListByDate();
-        ArrayList<Integer> customerIDs = new ArrayList<Integer>();
+        ArrayList<Integer> iterations = new ArrayList<Integer>();
         
         int index = 0;
         for (Journey journey : journeys) {
-            Customer c = new Customer(journey.getCustomerID());
+            Customer c = new Customer(journey.getID());
             c = c.GetDetail();
             dailyCustomers.add(c);
-            
-            customerIDs.add(index);
+            iterations.add(index);
             journey.calculatePricing(journey.getDistance());
             index++;
-        }        
-        request.setAttribute("customers", dailyCustomers);
-        request.setAttribute("journeys", journeys);
-        request.setAttribute("iterations", customerIDs);
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/dailyCustomers.jsp").forward(request, response);
+        }
+                
+        getServletContext().getRequestDispatcher("/WEB-INF/dailyReport.jsp").forward(request, response);
     }
     
     

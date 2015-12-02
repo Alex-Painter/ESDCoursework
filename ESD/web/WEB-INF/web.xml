@@ -42,7 +42,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>DailyCustomerController</servlet-name>
-        <servlet-class>Controllers.DailyCustomerController1</servlet-class>
+        <servlet-class>Controllers.DailyCustomerController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DailyCustomerController</servlet-name>
@@ -50,7 +50,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>DailyReportController</servlet-name>
-        <servlet-class>Controllers.DailyReportController1</servlet-class>
+        <servlet-class>Controllers.DailyReportController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DailyReportController</servlet-name>
