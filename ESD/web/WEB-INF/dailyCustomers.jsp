@@ -11,10 +11,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Daily Report</title>
+        <title>Customers of today</title>
     </head>
     <body>
-        <h1>Daily Report</h1>
+        <h1>Customers of today</h1>
         
         <table border="1px">
             <tr>

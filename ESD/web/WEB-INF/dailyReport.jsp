@@ -9,10 +9,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Customers of today</title>
+        <title>Daily Report</title>
     </head>
     <body>
-        <h1>Customers of today</h1>
+        <h1>Daily Report</h1>
         Number of customers served today: ${customersServed} 
         <br></br>
         Today's turnover: ${turnover}

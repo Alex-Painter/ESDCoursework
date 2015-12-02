@@ -8,8 +8,11 @@ package Controllers;
 import Models.*;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +51,15 @@ public class DailyCustomerController extends HttpServlet {
             dailyCustomers.add(c);
             
             customerIDs.add(index);
-            journey.calculatePricing(journey.getDistance());
+            
+            
+            try {
+                journey.calculatePricing(journey.getDistance());
+            } catch (SQLException ex) {
+                Logger.getLogger(DailyCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(DailyCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             index++;
         }        
         request.setAttribute("customers", dailyCustomers);

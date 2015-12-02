@@ -9,7 +9,10 @@ import Models.Driver;
 import Models.*;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +45,13 @@ public class DailyReportController extends HttpServlet {
         int turnover = 0;
 
         for (Journey journey : journeys) {
-            journey.calculatePricing(journey.getDistance());
+            try {
+                journey.calculatePricing(journey.getDistance());
+            } catch (SQLException ex) {
+                Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             turnover += journey.getJourneyPrice();
         }
 
