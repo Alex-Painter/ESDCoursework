@@ -55,7 +55,8 @@
                 <span><b>Dropoff</b> : ${invoice.getDropoff()}</span><br/>
                 <span><b>Time</b> : ${invoice.getTime()}</span><br/>
                 <span><b>Date</b> : ${invoice.getDate()}</span><br/>
-                <span><b>Cost/Distance</b> : ${invoice.getPrice()}</span><br/><br/>
+                <span><b>Distance</b> : ${invoice.getDistance()} miles</span><br/>
+                <span><b>Price</b> : £${invoice.getPrice()}</span><br/><br/>
             </c:forEach>
         </form>
     </body>
