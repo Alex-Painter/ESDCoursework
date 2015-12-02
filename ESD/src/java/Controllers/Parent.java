@@ -22,7 +22,7 @@ public class Parent {
 
         HttpSession session = request.getSession();
         if (session.getAttribute("id") == null) {
-            session.invalidate();            
+            //session.invalidate();            
             response.sendRedirect("login.jsp");
         }
 
