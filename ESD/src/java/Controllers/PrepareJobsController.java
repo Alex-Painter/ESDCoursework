@@ -81,19 +81,6 @@ public class PrepareJobsController extends HttpServlet {
                 String destination = d.getDestination();
                 Journey j2 = new Journey();
                 int distance = j2.getDistance(address, destination);
-
-                /*//create new customer
-                 String custNameName = "CustomerName" + Integer.toString(demandId);
-                 String custAddrName = "CustomerAddress" + Integer.toString(demandId);
-                 String custName = request.getParameter(custNameName);
-                 String custAddr = request.getParameter(custAddrName);
-                 Customer c = new Customer();
-                 c.setName(custName);
-                 c.setAddress(custAddr);
-                 c.WriteToDB();
-                                
-                 c = c.GetDetailByNameAndAddress();
-                 int customerID = c.getID();*/
                 
                 String driversRegistration = driverReg;
                 Date date = d.getDate();
