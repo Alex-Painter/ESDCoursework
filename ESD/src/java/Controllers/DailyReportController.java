@@ -8,6 +8,7 @@ package Controllers;
 import Models.Driver;
 import Models.*;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,10 +32,13 @@ public class DailyReportController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        java.sql.Date today = new java.sql.Date(1L);
+        today = new Date(System.currentTimeMillis());
+        
         ArrayList<Journey> journeys;
 
         Journey j = new Journey();
-        journeys = j.ListByDate();
+        journeys = j.ListByDate(today);
         int turnover = 0;
 
         for (Journey journey : journeys) {

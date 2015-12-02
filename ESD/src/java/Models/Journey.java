@@ -273,7 +273,7 @@ public class Journey {
         return results;
     }
 
-    public ArrayList<Journey> ListByDate() {
+    public ArrayList<Journey> ListByDate(Date dateToUse) {
 
         ArrayList<Journey> results = new ArrayList<Journey>();
 
@@ -289,7 +289,7 @@ public class Journey {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetListByDateQuery();
+            String query = GetListByDateQuery(dateToUse);
 
             if (!"".equals(query)) {
 
@@ -623,12 +623,12 @@ public class Journey {
         return query;
     }
 
-    public String GetListByDateQuery() {
+    public String GetListByDateQuery(Date date) {
 
         int id = getID();
         String query = "";
 
-        query = "SELECT * FROM Journey WHERE Date='2015-12-02';";
+        query = "SELECT * FROM Journey WHERE Date='" + date + "';";
         return query;
     }
     // </editor-fold>

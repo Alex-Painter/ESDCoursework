@@ -5,9 +5,10 @@
  */
 package Controllers;
 
-import Models.Driver;
 import Models.*;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,11 +33,12 @@ public class DailyCustomerController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ArrayList<Journey> journeys;
         
-        int price = 0;
-        
+        java.sql.Date today = new java.sql.Date(1L);
+        today = new Date(System.currentTimeMillis());
+
         Journey j = new Journey();
         ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
-        journeys = j.ListByDate();
+        journeys = j.ListByDate(today);
         ArrayList<Integer> customerIDs = new ArrayList<Integer>();
         
         int index = 0;
