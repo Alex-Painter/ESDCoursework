@@ -17,16 +17,32 @@ import java.sql.Statement;
  */
 public class Invoice {
 
-    public int CustomerID;
-    public String CustomerName;
-    public String DriverRegistration;
-    public String DriverName;
-    public String Pickup;
-    public String Dropoff;
-    public String Time;
-    public String Date;
-    public int Distance;
-    public double Price;
+    private int CustomerID;
+    private String CustomerName;
+    private String DriverRegistration;
+    private String DriverName;
+    private String Pickup;
+    private String Dropoff;
+    private String Time;
+    private String Date;
+    private int Distance;
+    private double Price;
+
+    public Invoice(int CustomerID, String CustomerName, String DriverRegistration, String DriverName, String Pickup, String Dropoff, String Time, String Date, int Distance, double Price) {
+        this.CustomerID = CustomerID;
+        this.CustomerName = CustomerName;
+        this.DriverRegistration = DriverRegistration;
+        this.DriverName = DriverName;
+        this.Pickup = Pickup;
+        this.Dropoff = Dropoff;
+        this.Time = Time;
+        this.Date = Date;
+        this.Distance = Distance;
+        this.Price = Price;
+    }
+
+    public Invoice() {
+    }
 
     public int getCustomerID() {
         return CustomerID;
@@ -68,25 +84,6 @@ public class Invoice {
         return Price;
     }
 
-    public Invoice(int CustomerID, String CustomerName, String DriverRegistration, String DriverName, String Pickup, String Dropoff, String Time, String Date, int Distance, double Price) {
-        this.CustomerID = CustomerID;
-        this.CustomerName = CustomerName;
-        this.DriverRegistration = DriverRegistration;
-        this.DriverName = DriverName;
-        this.Pickup = Pickup;
-        this.Dropoff = Dropoff;
-        this.Time = Time;
-        this.Date = Date;
-        this.Distance = Distance;
-        this.Price = Price;
-    }
-
-    public Invoice() {
-    }
-
-
-    
-
     public Invoice GetInvoice(int JourneyID) {
         Connection con;
         Statement state;
@@ -115,7 +112,7 @@ public class Invoice {
                 String Date = "";
                 int Distance = -1;
                 double invoicePrice = -1.0;
-                
+
                 int rowCount = 0;
 
                 while (rs.next()) {
@@ -129,10 +126,10 @@ public class Invoice {
                     Time = rs.getString("Time");
                     Date = rs.getString("Date");
                     Distance = rs.getInt("Distance");
-                    
+
                     Price price = new Price();
                     invoicePrice = price.GetPrice(Distance);
-                    
+
                 }
 
                 rs.close();
