@@ -16,6 +16,7 @@ import javax.servlet.http.*;
  * @author Charlie
  */
 public class CustomersListController extends HttpServlet {
+
     public CustomersListController() {
         super();
     }
@@ -23,18 +24,12 @@ public class CustomersListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ArrayList<Customer> customers = new ArrayList<Customer>();
-        
+
         Customer customer = new Customer();
         customers = customer.List();
-        
+
         request.setAttribute("customers", customers);
         getServletContext().getRequestDispatcher("/WEB-INF/customersList.jsp").forward(request, response);
     }
-    
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("backBtn") != null) {
-            response.sendRedirect("http://localhost:8080/ESD/admin.jsp");
-        }
-    }
+
 }

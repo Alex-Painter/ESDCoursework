@@ -11,10 +11,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Today's Customers</title>
+        <title>Customers of today</title>
     </head>
     <body>
-        <h1>Today's Customers</h1>
+        <h1>Customers of today</h1>
         
         <table border="1px">
             <tr>
@@ -33,8 +33,6 @@
             </c:forEach>
         </table> 
         <br></br>
-        <form method="post" action="DailyCustomerController">
-            <input type="submit" value="<- Back" name="backBtn"/>
-        </form>
+            <a href="admin.jsp"><- Back</a>
     </body>
 </html>

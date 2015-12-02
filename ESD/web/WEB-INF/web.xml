@@ -56,4 +56,12 @@
         <servlet-name>DailyReportController</servlet-name>
         <url-pattern>/DailyReportController</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ChangeDistancePriceController</servlet-name>
+        <servlet-class>Controllers.ChangeDistancePriceController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ChangeDistancePriceController</servlet-name>
+        <url-pattern>/ChangeDistancePriceController</url-pattern>
+    </servlet-mapping>
 </web-app>

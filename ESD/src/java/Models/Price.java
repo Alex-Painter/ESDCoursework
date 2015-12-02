@@ -27,7 +27,7 @@ public class Price {
 
     private int ID;
     private int Distance;
-    private int Price;
+    private double Price;
 
     // <editor-fold desc="Constructor">
     public Price() {
@@ -39,9 +39,9 @@ public class Price {
         GetDetail();
     }
 
-    public Price(int distance, int name, int price) {
-        this.ID = distance;
-        this.Distance = name;
+    public Price(int priceID, int distance, double price) {
+        this.ID = priceID;
+        this.Distance = distance;
         this.Price = price;
     }
 
@@ -61,11 +61,11 @@ public class Price {
         this.Distance = Distance;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return Price;
     }
 
-    public void setPrice(int Price) {
+    public void setPrice(double Price) {
         this.Price = Price;
     }
 
@@ -159,6 +159,36 @@ public class Price {
 
     }
 
+    public boolean ChangeDistancePrice(int minDistance, int maxDistance, double priceIncrease) {
+        Connection con;
+        Statement state;
+
+        Properties p;
+        p = new Properties();
+
+        try {
+
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetUpdateDistancePriceQuery(minDistance, maxDistance, priceIncrease);
+
+            if (!"".equals(query)) {
+
+                state.executeUpdate(query);
+
+                state.close();
+                con.close();
+
+                return true;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        };
+        return false;
+    }
+
     // </editor-fold>
     // <editor-fold desc="GetDetail">
     public Price GetDetail() {
@@ -238,13 +268,13 @@ public class Price {
 
                 int distance = -1;
                 int priceID = -1;
-                int price = -1;
+                double price = -1;
 
                 while (rs.next()) {
-                    distance = rs.getInt("Registration");
-                    priceID = rs.getInt("Name");
-                    price = rs.getInt("password");
-                    Price d = new Price(distance, priceID, price);
+                    distance = rs.getInt("Distance");
+                    priceID = rs.getInt("PriceListID");
+                    price = rs.getDouble("Price");
+                    Price d = new Price(priceID, distance, price);
                     results.add(d);
                 }
 
@@ -377,31 +407,7 @@ public class Price {
     }
 
     public String GetListQuery() {
-
-//        int distance = getDistance();
-//        int priceID = getID();
-//        int price= getPrice();
-//
-//        if (distance != null) {
-//        } else {
-//            distance = "";
-//        }
-//        if (priceID != null) {
-//        } else {
-//            priceID = "";
-//        }
-//        if (price != null) {
-//        } else {
-//            price= "";
-//        }
-//
-//        String query = "";
-//        query = query + "SELECT * FROM Drivers";
-//        query = query + " WHERE Registration LIKE '%" + distance + "%'";
-//        query = query + " AND Name LIKE '%" + priceID + "%'";
-//        query = query + " AND password LIKE '%" + price+ "%';";
-        //return query;
-        return "";
+        return "SELECT * FROM PriceList ORDER BY Distance;";
     }
 
     public String GetWriteToDBQuery() {
@@ -431,6 +437,21 @@ public class Price {
 //        query = query + " ('" + distance + "','" + priceID + "','" + price+ "');";
         //return query;
         return "";
+
+    }
+
+    public String GetUpdateDistancePriceQuery(int minDistance, int maxDistance, double priceIncrease) {
+        String query = "";
+
+        query = ""
+                + "UPDATE `PriceList`\n"
+                + "\n"
+                + "SET `Price`=`Price` + " + priceIncrease + "\n"
+                + "\n"
+                + "WHERE `Distance` >= " + minDistance + " \n"
+                + "AND `Distance` <= " + maxDistance + ";";
+
+        return query;
 
     }
 
@@ -547,5 +568,3 @@ public class Price {
     // </editor-fold>
 
 }
-    
-

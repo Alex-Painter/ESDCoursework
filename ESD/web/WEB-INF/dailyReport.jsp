@@ -1,5 +1,5 @@
 <%-- 
-    Document   : dailyCustomers
+    Document   : dailyReport
     Created on : 30-Nov-2015, 21:23:03
     Author     : h2-standal
 --%>
@@ -9,17 +9,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Today's Customers</title>
+        <title>Daily Report</title>
     </head>
     <body>
-        <h1>Daily customers</h1>
+        <h1>Daily Report</h1>
         Number of customers served today: ${customersServed} 
         <br></br>
         Today's turnover: £${turnover}
         
         <br></br>
-        <form method="post" action="DailyReportController">
-            <input type="submit" value="<- Back" name="backBtn"/>
-        </form>
+            <a href="admin.jsp"><- Back</a>
     </body>
 </html>

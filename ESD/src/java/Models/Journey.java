@@ -36,7 +36,7 @@ public class Journey {
     private String DriversRegistration;
     private Date Date;
     private Time Time;
-    private int JourneyPrice;
+    private double JourneyPrice;
 
     // <editor-fold desc="Constructor">
     public Journey() {
@@ -140,20 +140,20 @@ public class Journey {
         this.Time = Time;
     }
 
-    public int getJourneyPrice() {
+    public double getJourneyPrice() {
         return JourneyPrice;
     }
 
-    private void setJourneyPrice(int price) {
+    private void setJourneyPrice(double price) {
         this.JourneyPrice = price;
     }
 
     // </editor-fold>
     // <editor-fold desc="GetDetail">
-    public void calculatePricing(int distance) {
-        Price p = new Price(distance);
+    public void calculatePricing(int distance) throws SQLException, ClassNotFoundException {
+        Price p = new Price();
         p = p.GetDetail();
-        setJourneyPrice(p.getPrice());
+        setJourneyPrice(p.GetPrice(distance));
     }
 
     public Journey GetDetail() {
@@ -273,7 +273,7 @@ public class Journey {
         return results;
     }
 
-    public ArrayList<Journey> ListByDate() {
+    public ArrayList<Journey> ListByDate(Date dateToUse) {
 
         ArrayList<Journey> results = new ArrayList<Journey>();
 
@@ -289,7 +289,7 @@ public class Journey {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetListByDateQuery();
+            String query = GetListByDateQuery(dateToUse);
 
             if (!"".equals(query)) {
 
@@ -623,12 +623,12 @@ public class Journey {
         return query;
     }
 
-    public String GetListByDateQuery() {
+    public String GetListByDateQuery(Date date) {
 
         int id = getID();
         String query = "";
 
-        query = "SELECT * FROM Journey WHERE Date='2015-12-02';";
+        query = "SELECT * FROM Journey WHERE Date='" + date + "';";
         return query;
     }
     // </editor-fold>

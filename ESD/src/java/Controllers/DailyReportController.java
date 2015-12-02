@@ -8,7 +8,11 @@ package Controllers;
 import Models.Driver;
 import Models.*;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,15 +35,24 @@ public class DailyReportController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        java.sql.Date today = new java.sql.Date(1L);
+        today = new Date(System.currentTimeMillis());
+
         ArrayList<Journey> journeys;
-
-        Journey j = new Journey();
-        journeys = j.ListByDate();
         int turnover = 0;
+        Journey j = new Journey();
+        journeys = j.ListByDate(today);
 
-        for (Journey journey : journeys) {
-            journey.calculatePricing(journey.getDistance());
-            turnover += journey.getJourneyPrice();
+        try {
+
+            for (Journey journey : journeys) {
+                journey.calculatePricing(journey.getDistance());
+                turnover += journey.getJourneyPrice();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         request.setAttribute("customersServed", journeys.size());
@@ -48,10 +61,4 @@ public class DailyReportController extends HttpServlet {
         getServletContext().getRequestDispatcher("/WEB-INF/dailyReport.jsp").forward(request, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("backBtn") != null) {
-            response.sendRedirect("http://localhost:8080/ESD/admin.jsp");
-        }
-    }
 }

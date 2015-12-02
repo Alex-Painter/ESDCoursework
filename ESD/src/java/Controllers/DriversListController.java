@@ -50,23 +50,20 @@ public class DriversListController extends HttpServlet {
                 request.setAttribute("drivers", drivers);
             }
 
-            getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
         } else if (request.getParameter("newRegistration") != null) {
             String registration = request.getParameter("newRegistration");
             String name = request.getParameter("name");
             String password = request.getParameter("password");
             Driver newDriver = new Driver(registration, name, password);
-            
-            if(newDriver.WriteToDB()){
+
+            if (newDriver.WriteToDB()) {
                 ArrayList<Driver> drivers = new ArrayList<Driver>();
                 Driver driver = new Driver("", "", "");
                 drivers = driver.List();
-                
+
                 request.setAttribute("drivers", drivers);
-                getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
             }
-        } else if (request.getParameter("backBtn") != null) {
-            response.sendRedirect("http://localhost:8080/ESD/admin.jsp");
         }
+        getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
     }
 }

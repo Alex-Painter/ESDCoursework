@@ -25,68 +25,31 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+
         String registration = request.getParameter("username");
         String password = request.getParameter("password");
-        
+
         Driver driv;
         driv = new Driver();
         driv.setRegistration(registration);
         driv.setPassword(password);
-               
+
         HttpSession session = request.getSession();
-        
-        session.setMaxInactiveInterval(20*60); //20 lots of 60 seconds = 20 minutes
+
+        session.setMaxInactiveInterval(20 * 60); //20 lots of 60 seconds = 20 minutes
 
         if (driv.LogIn()) {
-                                
+
             Driver driverDetails = new Driver(registration);
             session.setAttribute("id", registration);
             session.setAttribute("name", driverDetails.getName());
             response.sendRedirect("admin.jsp");
-            
+
         } else {
-            
+
             session.setAttribute("error", "Log In Failed");
             response.sendRedirect("error.jsp");
-            
-        }   
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        /*
-        Authenticator auth;
-        auth = new Authenticator();
 
-        String name = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        LoginResult res = auth.Authenticate(name, password);
-        String result = res.getLoginResult();
-        String id = res.getLoggedInID();
-        
-        HttpSession session = request.getSession();
-        
-        session.setMaxInactiveInterval(20*60); //20 lots of 60 seconds = 20 minutes
-
-        if (result.contains("Fail") || "".equals(id)) {
-            session.setAttribute("error", result);
-            response.sendRedirect("error.jsp");
-            
-        } else {
-            session.setAttribute("username", name);
-            session.setAttribute("id", id);
-
-            response.sendRedirect("admin.jsp");
-        }   
-                */
+        }
     }
 }

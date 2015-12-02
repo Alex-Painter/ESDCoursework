@@ -52,10 +52,9 @@
             Password: <input type="password" name="password" id="password"/><br>
             <input type="submit" value="Add Driver"/>
         </form>
-        
+
         <br></br>
-        <form method="post" action="CustomersListController">
-            <input type="submit" value="<- Back" name="backBtn"/>
-        </form>
+        
+        <a href="admin.jsp"><- Back</a>
     </body>
 </html>
