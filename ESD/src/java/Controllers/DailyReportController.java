@@ -33,20 +33,17 @@ public class DailyReportController extends HttpServlet {
         ArrayList<Journey> journeys;
         
         Journey j = new Journey();
-        ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
         journeys = j.ListByDate();
-        ArrayList<Integer> iterations = new ArrayList<Integer>();
+        int turnover = 0;
         
-        int index = 0;
         for (Journey journey : journeys) {
-            Customer c = new Customer(journey.getID());
-            c = c.GetDetail();
-            dailyCustomers.add(c);
-            iterations.add(index);
             journey.calculatePricing(journey.getDistance());
-            index++;
+            turnover += journey.getJourneyPrice();
         }
-                
+        
+        request.setAttribute("customersServed", journeys.size());
+        request.setAttribute("turnover", turnover);
+
         getServletContext().getRequestDispatcher("/WEB-INF/dailyReport.jsp").forward(request, response);
     }
     

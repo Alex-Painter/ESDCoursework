@@ -52,6 +52,7 @@ public class DailyCustomerController extends HttpServlet {
         request.setAttribute("customers", dailyCustomers);
         request.setAttribute("journeys", journeys);
         request.setAttribute("iterations", customerIDs);
+
         
         getServletContext().getRequestDispatcher("/WEB-INF/dailyCustomers.jsp").forward(request, response);
     }
