@@ -47,10 +47,15 @@
         <h1>Add Driver</h1>
         <input type="submit" value="Add New" name="addDriver" onclick="showAddForm()" />
         <form style="display:none" id="addPara" method="post" action="DriversListController"> 
-            Registration: <input type="text" name="newRegistration" id="registration"><br>
-            Name: <input type="text" name="name" id="name"><br>
-            Password: <input type="password" name="password" id="password"><br>
-            <input type="submit" value="Add Driver">
+            Registration: <input type="text" name="newRegistration" id="registration"/><br>
+            Name: <input type="text" name="name" id="name"/><br>
+            Password: <input type="password" name="password" id="password"/><br>
+            <input type="submit" value="Add Driver"/>
+        </form>
+        
+        <br></br>
+        <form method="post" action="CustomersListController">
+            <input type="submit" value="<- Back" name="backBtn"/>
         </form>
     </body>
 </html>
