@@ -14,6 +14,12 @@
     <body>
         <h1>Daily customers</h1>
         Number of customers served today: ${customersServed} 
+        <br></br>
         Today's turnover: ${turnover}
+        
+        <br></br>
+        <form method="post" action="DailyReportController">
+            <input type="submit" value="<- Back" name="backBtn"/>
+        </form>
     </body>
 </html>
