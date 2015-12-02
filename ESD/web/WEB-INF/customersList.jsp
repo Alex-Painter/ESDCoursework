@@ -31,6 +31,8 @@
         </table>
         
         <br></br>
-        <input type="submit" value="<- Back" name="backBtn" onclick="DriversListController.addNew();" />
+        <form method="post" action="CustomersListController">
+            <input type="submit" value="<- Back" name="backBtn"/>
+        </form>
     </body>
 </html>

@@ -35,7 +35,6 @@ public class DriversListController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         if (request.getParameter("deletedReg") != null) {
             Object regToDelete = request.getParameter("deletedReg");
 
@@ -52,7 +51,7 @@ public class DriversListController extends HttpServlet {
             }
 
             getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
-        }else if (request.getParameter("newRegistration") != null){
+        } else if (request.getParameter("newRegistration") != null) {
             String registration = request.getParameter("newRegistration");
             String name = request.getParameter("name");
             String password = request.getParameter("password");
@@ -66,8 +65,8 @@ public class DriversListController extends HttpServlet {
                 request.setAttribute("drivers", drivers);
                 getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
             }
+        } else if (request.getParameter("backBtn") != null) {
+            response.sendRedirect("http://localhost:8080/ESD/admin.jsp");
         }
-
     }
-
 }
