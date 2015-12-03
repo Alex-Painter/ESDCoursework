@@ -76,7 +76,8 @@ public class PrepareJobsController extends HttpServlet {
                 String address = d.getAddress();
                 String destination = d.getDestination();
                 Journey j2 = new Journey();
-                int distance = j2.getDistance(address, destination);
+                j2.getDistance(address, destination);
+                int distance = j2.getDistance();
 
                 String driversRegistration = driverReg;
                 Date date = d.getDate();
