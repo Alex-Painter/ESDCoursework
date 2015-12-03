@@ -67,25 +67,6 @@
         </nav>
         <hr style="margin-top: 0"/>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <div class="row">
             <div class="col-md-12 container">
                 <div class="row">
