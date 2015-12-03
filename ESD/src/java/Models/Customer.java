@@ -113,6 +113,56 @@ public class Customer {
         }//tryerrr
     }
 
+    public Customer GetCustbyID(int id) {
+
+        Connection con;
+        Statement state;
+        ResultSet rs;
+
+        Properties p;
+        p = new Properties();
+
+        try {
+
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = getCustById(id);
+            if (query.length() > 0) {
+
+                rs = state.executeQuery(query);
+
+                String nam = "";
+                String add = "";
+                int rowCount = 0;
+
+                while (rs.next()) {
+                    rowCount = rowCount + 1;
+                    nam = rs.getString("Name");
+                    add = rs.getString("Address");
+                    id = rs.getInt("id");
+                }
+
+                rs.close();
+                state.close();
+                con.close();
+
+                if (rowCount == 1) {
+                    return new Customer(nam, add, id);
+                } else {
+                    return new Customer();
+                }
+            } else {
+                return new Customer();
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }//tryerrr
+
+        return new Customer();
+    }
+
     public Customer GetDetailByNameAndAddress() {
 
         Connection con;
@@ -306,6 +356,15 @@ public class Customer {
     }
     // </editor-fold>
     // <editor-fold desc="DB">
+
+    public String getCustById(int id) {
+
+        String query = "";
+        query = query + "SELECT * FROM Customer";
+        query = query + " WHERE id LIKE " + id + ";";
+
+        return query;
+    }
 
     public String GetListQuery() {
 

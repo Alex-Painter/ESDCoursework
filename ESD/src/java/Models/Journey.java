@@ -8,11 +8,7 @@ package Models;
 import Database.XMLReader;
 import Database.Properties;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -105,10 +101,10 @@ public class Journey {
         } catch (Exception ex) {
             System.out.println(ex);
         }
-        
+
         return -1;
     }
-    
+
     public void setDistance(int distance) {
         this.Distance = distance;
     }
@@ -337,7 +333,7 @@ public class Journey {
     // <editor-fold desc="WriteToDB">
     public int WriteToDB() throws SQLException {
         int id = -1;
-        
+
         try {
             Properties p;
             p = new Properties();
@@ -345,10 +341,10 @@ public class Journey {
             String query = GetWriteToDBQuery();
             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             int affectedRows = statement.executeUpdate();
-            
+
             if (affectedRows == 1) {
                 ResultSet generatedKeys = statement.getGeneratedKeys();
-                
+
                 if (generatedKeys.next()) {
                     id = (generatedKeys.getInt(1));
                 }
@@ -356,11 +352,10 @@ public class Journey {
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
-        
+
         return id;
     }
-    
-    
+
     // </editor-fold>
     // <editor-fold desc="Update">
     public boolean Update() {
@@ -419,11 +414,13 @@ public class Journey {
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
-        
+
         return false;
     }
+
     // </editor-fold>
     // <editor-fold desc="DB">
+
     public String GetWriteToDBQuery() {
         String dest = getDestination();
         int dist = getDistance();
@@ -497,13 +494,13 @@ public class Journey {
         }
         if (dist > 0) {
             distStr = Integer.toString(dist);
-        } 
+        }
         if (custID > 0) {
             custIDStr = Integer.toString(custID);
         }
 
         String query = "";
-        
+
         if (id > 0) {
             query = query + "UPDATE Journey";
             query = query + " SET Destination = '" + dest + "', Distance = " + distStr + ", Custromer.id = " + custIDStr;
@@ -527,7 +524,7 @@ public class Journey {
 
         return query;
     }
-    
+
     public String GetListQuery() {
         String query = "SELECT * FROM Journey;";
         return query;
@@ -541,6 +538,18 @@ public class Journey {
     public String GetListByDateQuery(Date date) {
         String query = "SELECT * FROM Journey WHERE Date='" + date + "';";
         return query;
+    }
+
+    public ArrayList<Journey> getMyJourneys() {
+        ArrayList<Journey> allJourneys = List();
+        ArrayList<Journey> myJourneys = new ArrayList<Journey>();
+
+        for (Journey journey : allJourneys) {
+            if (journey.getDriversRegistration().equals(getDriversRegistration())){
+                myJourneys.add(journey);
+            }      
+        }
+        return myJourneys;
     }
     // </editor-fold>
 }

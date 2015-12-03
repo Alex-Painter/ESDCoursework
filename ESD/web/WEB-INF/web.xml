@@ -64,4 +64,12 @@
         <servlet-name>ChangeDistancePriceController</servlet-name>
         <url-pattern>/ChangeDistancePriceController</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>MyJobsController</servlet-name>
+        <servlet-class>Controllers.MyJobsController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyJobsController</servlet-name>
+        <url-pattern>/MyJobsController</url-pattern>
+    </servlet-mapping>
 </web-app>
