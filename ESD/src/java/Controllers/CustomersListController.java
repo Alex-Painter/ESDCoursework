@@ -6,6 +6,7 @@
 package Controllers;
 
 import Models.Customer;
+import Models.Invoice;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -24,11 +25,19 @@ public class CustomersListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ArrayList<Customer> customers = new ArrayList<Customer>();
+        ArrayList<Double> prices = new ArrayList<Double>();
 
         Customer customer = new Customer();
         customers = customer.List();
+        
+        for (Customer cust : customers){
+            Invoice custInv = new Invoice();
+            custInv.GetInvoiceFromCustomerID(cust.getID());
+            prices.add(custInv.getPrice());
+        }
 
         request.setAttribute("customers", customers);
+        request.setAttribute("prices", prices);
         getServletContext().getRequestDispatcher("/WEB-INF/customersList.jsp").forward(request, response);
     }
 

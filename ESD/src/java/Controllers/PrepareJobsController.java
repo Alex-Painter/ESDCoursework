@@ -105,6 +105,7 @@ public class PrepareJobsController extends HttpServlet {
                     tempInv.setConfirmed(true);
                     tempInv.Update();
                     d.setStatus("Confirmed");
+                    //update demand in db
                     invoices.add(tempInv);
                 } catch (Exception e) {
                     System.out.println(e);

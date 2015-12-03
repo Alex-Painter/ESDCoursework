@@ -181,6 +181,52 @@ public class Invoice {
         }//tryerrr
         //return null;
     }
+    
+    public void GetInvoiceFromCustomerID(int CustomerID) {
+        Connection con;
+        Statement state;
+        ResultSet rs;
+
+        Properties p;
+        p = new Properties();
+
+        try {
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetInvoiceFromCustomerIDQ(CustomerID);
+            if (query.length() > 0) {
+
+                rs = state.executeQuery(query);
+
+                int customerID = -1;
+                int demandID = 0;
+                double price = -1.0;
+
+                int rowCount = 0;
+                while (rs.next()) {
+                    rowCount = rowCount + 1;
+                    customerID = rs.getInt("CustomerID");
+                    demandID = rs.getInt("DemandID");
+                    price = rs.getDouble("Price");
+
+                }
+                rs.close();
+                state.close();
+                con.close();
+                if (rowCount == 1) {
+                    this.setCustomerID(customerID);
+                    this.setDemandID(demandID);
+                    this.setPrice(price);
+                    //this.setConfirmed(confirmed);
+                    //return new Invoice(customerID, demandID, price);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }//tryerrr
+        //return null;
+    }
 
     public boolean Update() {
         Connection con;
@@ -231,8 +277,8 @@ public class Invoice {
 
         String query = "";
         query = query + "UPDATE Invoices";
-        query = query + " SET Price = `" + price + "`, Confirmed = " + confirmed + "";
-        query = query + " WHERE CustomerID = '" + customerID + "';";
+        query = query + " SET Price = " + price + ", Confirmed = " + confirmed + "";
+        query = query + " WHERE CustomerID = " + customerID + ";";
 
         return query;
     }
@@ -268,6 +314,14 @@ public class Invoice {
         String query = "";
         query = "SELECT * FROM `Invoices` "
                 + "WHERE `DemandID` = " + DemandID + ";";
+
+        return query;
+    }
+    
+    public String GetInvoiceFromCustomerIDQ(int CustomerID){
+        String query = "";
+        query = "SELECT * FROM `Invoices` "
+                + "WHERE `CustomerID` = " + CustomerID + ";";
 
         return query;
     }

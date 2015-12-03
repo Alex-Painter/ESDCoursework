@@ -70,15 +70,17 @@
                                     <th style="text-align:center">ID</th>
                                     <th style="text-align:center">Name</th>
                                     <th style="text-align:center">Address</th>
+                                    <th style="text-align:center">Invoice</th>
                                     <!--th style="text-align:center">Invoice</th-->
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${customers}" var="customer">
+                                <c:forEach items="${customers}" var="customer" varStatus="status">
                                     <tr>
                                         <td>${customer.getID()}</td>
                                         <td>${customer.getName()}</td>
                                         <td>${customer.getAddress()}</td>
+                                        <td>${prices[status.index]}</td>
                                         <!--td><a href="#"><span class="glyphicon glyphicon-align-right"/></a></td-->
                                     </tr>
                                 </c:forEach>
