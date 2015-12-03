@@ -43,11 +43,11 @@ public class Demand {
     public Demand() {
     }
 
-    public Demand Demand(int id) {
+    public Demand(int id) {
         this.id = id;
-        return GetDetail();
+        setDetails();
     }
-
+    
     public int getId() {
         return id;
     }
@@ -128,7 +128,7 @@ public class Demand {
         this.setId(id);
     }
 
-    public Demand GetDetail() {
+    public void setDetails() {
 
         Connection con;
         Statement state;
@@ -163,8 +163,14 @@ public class Demand {
                     date = rs.getDate("Date");
                     time = rs.getTime("Time");
                     status = rs.getString("Status");
-
-                    return new Demand(id, nam, add, destination, date, time, status);
+                    
+                    setId(id);
+                    setName(nam);
+                    setAddress(add);
+                    setDestination(destination);
+                    setDate(date);
+                    setTime(time);
+                    setStatus(status);
                 }
 
                 rs.close();
@@ -176,7 +182,6 @@ public class Demand {
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
-        return new Demand();
     }
 
     public ArrayList<Demand> list() {

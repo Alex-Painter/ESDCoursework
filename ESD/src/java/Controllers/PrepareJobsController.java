@@ -70,10 +70,9 @@ public class PrepareJobsController extends HttpServlet {
                 request.setAttribute("test2", driverReg);
                 
                 if (!"admin".equals(driverReg)) {
-                    Demand d = new Demand();
+                    Demand d = new Demand(demandId);
 
                     d.setId(demandId);
-                    d = d.GetDetail();
                     String address = d.getAddress();
                     String destination = d.getDestination();
                     Journey j2 = new Journey();

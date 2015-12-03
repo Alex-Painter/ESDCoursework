@@ -32,6 +32,11 @@ public class Invoice {
     public Invoice() {
         this.Confirmed = false;
     }
+    
+    public Invoice(int CustomerID) {
+        this.CustomerID = CustomerID;
+        setDetails();
+    }
 
     public int getCustomerID() {
         return CustomerID;
@@ -85,7 +90,7 @@ public class Invoice {
 
     }
 
-    public Invoice GetInvoice(int JourneyID) {
+    public void setDetails() {
         Connection con;
         Statement state;
         ResultSet rs;
@@ -98,7 +103,7 @@ public class Invoice {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetQuery(JourneyID);
+            String query = GetInvoiceFromCustomerIDQ();
             if (query.length() > 0) {
 
                 rs = state.executeQuery(query);
@@ -113,9 +118,10 @@ public class Invoice {
                 while (rs.next()) {
                     rowCount = rowCount + 1;
                     CustomerID = rs.getInt("CustomerID");
-                    Distance = rs.getInt("Distance");
-                    Price price = new Price(Distance);
-                    invoicePrice = price.getPrice();
+                    Distance = rs.getInt("DemandID");
+                    invoicePrice = rs.getDouble("Price");
+                    //Price price = new Price(Distance);
+                    //invoicePrice = price.getPrice();
 
                 }
 
@@ -126,14 +132,15 @@ public class Invoice {
                 con.close();
 
                 if (rowCount == 1) {
-                    return new Invoice(CustomerID, DemandID, invoicePrice);
+                    setCustomerID(CustomerID);
+                    setDemandID(DemandID);
+                    setPrice(invoicePrice);
                 }
             }
 
         } catch (Exception e) {
             System.err.println("Error: " + e);
         }//tryerrr
-        return null;
     }
 
     public void GetInvoiceFromDemandID(int DemandID) {
@@ -285,32 +292,13 @@ public class Invoice {
         return query;
     }
 
-    public String GetQuery(int JourneyID) {
-
-        String query = "";
-        query = "SELECT `Customer`.`id` as `CustomerID`,\n"
-                + "`Customer`.`Name` as `CustomerName`,\n"
-                + "`Drivers`.`Registration` as `DriverRegistration`,\n"
-                + "`Drivers`.`Name` as `DriverName`,\n"
-                + "`Customer`.`Address` as `Pickup`,\n"
-                + "`Journey`.`Destination` as `Dropoff`,\n"
-                + "`Journey`.`Time` as `Time`,\n"
-                + "`Journey`.`Date` as `Date`,\n"
-                //+ "`PriceList`.`Price` as `Price`,\n"
-                + "`Journey`.`Distance` as `Distance`\n"
-                + "\n"
-                + "FROM `Journey`\n"
-                + "INNER JOIN `Customer`\n"
-                + "ON `Customer`.`id` = `Journey`.`Customer.id`\n"
-                + "INNER JOIN `Drivers`\n"
-                + "ON `Drivers`.`Registration` = `Journey`.`Drivers.Registration`\n"
-                //+ "INNER JOIN `PriceList`\n"
-                //+ "ON `PriceList`.`Distance` = `Journey`.`Distance`\n"
-                + "WHERE `Journey`.`id` = " + JourneyID + ";";
-
-        return query;
-    }
-
+//public String GetDetailsByDistanceQuery() {
+//        int distance = getDistance();
+//
+//        String query = "SELECT * FROM PriceList WHERE Distance = " + distance + ";";
+//
+//        return query;
+//    }
     public String GetInvoiceFromDemandIDQ(int DemandID) {
 
         String query = "";
@@ -328,4 +316,11 @@ public class Invoice {
         return query;
     }
 
+    public String GetInvoiceFromCustomerIDQ(){
+        String query = "";
+        query = "SELECT * FROM `Invoices` "
+                + "WHERE CustomerID = " + getCustomerID() + ";";
+        
+        return query;
+    }
 }

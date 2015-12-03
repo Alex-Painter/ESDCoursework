@@ -39,16 +39,9 @@ public class DailyReportController extends HttpServlet {
             Journey j = new Journey();
             journeys = j.ListByDate(today);
 
-            try {
-
-                for (Journey journey : journeys) {
-                    journey.calculatePricing(journey.getDistance());
-                    turnover += journey.getJourneyPrice();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(DailyReportController.class.getName()).log(Level.SEVERE, null, ex);
+            for (Journey journey : journeys) {
+                Invoice i = new Invoice(journey.getCustomerID());
+                turnover += i.getPrice();
             }
 
             request.setAttribute("customersServed", journeys.size());

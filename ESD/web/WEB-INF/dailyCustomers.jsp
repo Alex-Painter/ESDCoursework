@@ -86,7 +86,7 @@
                                     <tr>
                                         <td>${customers[status.index].getName()}</td>
                                         <td>${journey.getDestination()}</td>
-                                        <td>${journey.getJourneyPrice()}</td>
+                                        <td>${invoices[status.index].getPrice()}</td>
                                     </tr>      
                                 </c:forEach>
                             </tbody>
