@@ -39,6 +39,7 @@ public class DailyReportController extends HttpServlet {
             Journey j = new Journey();
             journeys = j.ListByDate(today);
 
+            //for each journey, add invoice price
             for (Journey journey : journeys) {
                 Invoice i = new Invoice(journey.getCustomerID());
                 turnover += i.getPrice();

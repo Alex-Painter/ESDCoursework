@@ -128,6 +128,7 @@ public class Demand {
         this.setId(id);
     }
 
+    //set object details to database entry
     public void setDetails() {
 
         Connection con;
@@ -151,11 +152,13 @@ public class Demand {
                 String nam = "";
                 String add = "";
                 String destination = "";
-                Date date;
-                Time time;
+                Date date = new Date(0);
+                Time time = new Time(0);
                 String status = "";
+                int rowCount = 0;
 
                 while (rs.next()) {
+                    rowCount += 1;
                     id = rs.getInt("ID");
                     nam = rs.getString("Name");
                     add = rs.getString("Address");
@@ -164,6 +167,9 @@ public class Demand {
                     time = rs.getTime("Time");
                     status = rs.getString("Status");
                     
+                }
+                
+                if (rowCount == 1) {
                     setId(id);
                     setName(nam);
                     setAddress(add);
@@ -172,6 +178,7 @@ public class Demand {
                     setTime(time);
                     setStatus(status);
                 }
+                
 
                 rs.close();
                 state.close();

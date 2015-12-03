@@ -65,6 +65,7 @@ public class Driver {
     }
     // </editor-fold>
     // <editor-fold desc="setDetails">
+    //set object details to database entry
     public void setDetails() {
         if (!"".equals(getRegistration())) {
             Connection con;

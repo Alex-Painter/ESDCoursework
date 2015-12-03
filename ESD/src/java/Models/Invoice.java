@@ -90,6 +90,7 @@ public class Invoice {
 
     }
 
+    //set object details to database entry
     public void setDetails() {
         Connection con;
         Statement state;

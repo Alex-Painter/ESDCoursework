@@ -38,6 +38,8 @@ public class CustomersListController extends HttpServlet {
             for (Customer cust : customers) {
                 Invoice custInv = new Invoice();
                 custInv.GetInvoiceFromCustomerID(cust.getID());
+                
+                //calculate prices
                 double price = custInv.getPrice();
                 double noVAT = price * 0.8;
                 double VAT = price * 0.2;

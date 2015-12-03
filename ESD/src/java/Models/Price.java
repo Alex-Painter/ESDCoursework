@@ -145,6 +145,7 @@ public class Price {
     }
     // </editor-fold>
     // <editor-fold desc="SetDetails">
+    //set object details to database entry
     public void SetDetails() {
         if (!"".equals(getDistance())) {
             Connection con;

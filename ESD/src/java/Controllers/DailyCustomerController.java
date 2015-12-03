@@ -41,17 +41,14 @@ public class DailyCustomerController extends HttpServlet {
             Journey j = new Journey();
             journeys = j.ListByDate(today);
 
-            try {
+            //for each journey, get invoice price and customer name
                 for (Journey journey : journeys) {
                     Customer c = new Customer(journey.getCustomerID());
                     Invoice i = new Invoice(journey.getCustomerID());
                     dailyCustomers.add(c);
                     invoices.add(i);
-                    //journey.calculatePricing(journey.getDistance());
                 }
-            } catch (Exception ex) {
-                System.out.println(ex);
-            }
+
             request.setAttribute("customers", dailyCustomers);
             request.setAttribute("journeys", journeys);
             request.setAttribute("invoices", invoices);

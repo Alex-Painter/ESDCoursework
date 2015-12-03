@@ -67,6 +67,7 @@ public class Customer {
 
     // </editor-fold>
     // <editor-fold desc="GetDetail">
+    //set object details to database entry
     public void setDetails() {
 
         Connection con;
@@ -91,7 +92,7 @@ public class Customer {
                 int id = -1;
                 int rowCount = 0;
 
-                while (rs.next()) {
+                while (rs.next()) {//if query result, set parameters
                     rowCount = rowCount + 1;
                     nam = rs.getString("Name");
                     add = rs.getString("Address");
@@ -102,7 +103,7 @@ public class Customer {
                 state.close();
                 con.close();
 
-                if (rowCount == 1) {
+                if (rowCount == 1) { //if only entry
                     setName(nam);
                     setAddress(add);
                     setID(id);
