@@ -12,14 +12,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Customers of today</title>
-
-
-
-
-
-
-
-
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <!-- Optional theme -->
@@ -42,10 +34,7 @@
             .btn-blank-red:hover {
                 background-color: #ebb0b0;
             }
-
-
         </style>
-
     </head>
     <body>
         <nav class="navbar" id="top" role="banner" style="margin-bottom: 0px; border-width:0px">
@@ -69,9 +58,6 @@
             </div>             
         </nav>
         <hr style="margin-top: 0"/>
-
-
-
         <div class="row">
             <div class="col-md-12 container">
                 <div class="row">
@@ -96,11 +82,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${iterations}" var="iteration">
+                                <c:forEach items="${journeys}" var="journey" varStatus="status">
                                     <tr>
-                                        <td>${customers.get(iteration).getName()}</td>
-                                        <td>${journeys.get(iteration).getDestination()}</td>
-                                        <td>${journeys.get(iteration).getJourneyPrice()}</td>
+                                        <td>${customers[status.index].getName()}</td>
+                                        <td>${journey.getDestination()}</td>
+                                        <td>${journey.getJourneyPrice()}</td>
                                     </tr>      
                                 </c:forEach>
                             </tbody>

@@ -234,6 +234,31 @@ public class Demand {
         return results;
     }
 
+    public boolean Update() {
+        Connection con;
+        Statement state;
+        Properties p;
+        p = new Properties();
+
+        try {
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetUpdateQuery();
+
+            if (!"".equals(query)) {
+                state.executeUpdate(query);
+                state.close();
+                con.close();
+                return true;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }
+        return false;
+    }
+
     public boolean Delete() {
 
         Connection con;
@@ -280,6 +305,18 @@ public class Demand {
         query = query + " VALUES";
         query = query + " ('" + nam + "','" + add + "','" + dest + "'"
                 + ",'" + dt + "','" + tim + "','" + status + "');";
+
+        return query;
+    }
+
+    public String GetUpdateQuery() {
+        int id = this.getId();
+        String status = this.getStatus();
+
+        String query = "";
+        query = query + "UPDATE Demands";
+        query = query + " SET Status = '" + status + "' ";
+        query = query + " WHERE id = " + id + ";";
 
         return query;
     }

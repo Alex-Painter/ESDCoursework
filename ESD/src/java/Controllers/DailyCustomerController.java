@@ -37,34 +37,26 @@ public class DailyCustomerController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ArrayList<Journey> journeys;
 
-        java.sql.Date today = new java.sql.Date(1L);
+        java.sql.Date today;
         today = new Date(System.currentTimeMillis());
 
         Journey j = new Journey();
         ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
         journeys = j.ListByDate(today);
-        ArrayList<Integer> customerIDs = new ArrayList<Integer>();
 
-        int index = 0;
         try {
             for (Journey journey : journeys) {
                 Customer c = new Customer(journey.getCustomerID());
                 c = c.GetDetail();
                 dailyCustomers.add(c);
 
-                customerIDs.add(index);
-
                 journey.calculatePricing(journey.getDistance());
-                index++;
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(DailyCustomerController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DailyCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
         request.setAttribute("customers", dailyCustomers);
         request.setAttribute("journeys", journeys);
-        request.setAttribute("iterations", customerIDs);
 
         getServletContext().getRequestDispatcher("/WEB-INF/dailyCustomers.jsp").forward(request, response);
     }

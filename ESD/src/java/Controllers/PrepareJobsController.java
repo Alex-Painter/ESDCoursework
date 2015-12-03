@@ -5,7 +5,6 @@
  */
 package Controllers;
 
-import Models.Customer;
 import Models.Demand;
 import Models.Driver;
 import Models.Invoice;
@@ -105,7 +104,7 @@ public class PrepareJobsController extends HttpServlet {
                     tempInv.setConfirmed(true);
                     tempInv.Update();
                     d.setStatus("Confirmed");
-                    //update demand in db
+                    d.Update();
                     invoices.add(tempInv);
                 } catch (Exception e) {
                     System.out.println(e);
