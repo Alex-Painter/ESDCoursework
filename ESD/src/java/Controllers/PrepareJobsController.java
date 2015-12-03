@@ -30,8 +30,6 @@ public class PrepareJobsController extends HttpServlet {
     public PrepareJobsController() {
         super();
     }
-    
-    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,7 +44,7 @@ public class PrepareJobsController extends HttpServlet {
 
         Demand dema = new Demand();
         ArrayList<Demand> demands = new ArrayList<Demand>();//dem.List();
-        demands = dema.list();
+        demands = dema.listOutstandingDemands();
         request.setAttribute("demands", demands);
 
         Journey journ = new Journey();
@@ -62,9 +60,8 @@ public class PrepareJobsController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         Demand dema = new Demand();
-        ArrayList<Invoice> invoices = new ArrayList<Invoice>();
         ArrayList<Demand> demands = new ArrayList<Demand>();
-        demands = dema.list();
+        demands = dema.listOutstandingDemands();
         for (Demand demand : demands) {
             int demandId = demand.getId();
             String demandIdString = "DemandID" + Integer.toString(demandId);
@@ -80,7 +77,7 @@ public class PrepareJobsController extends HttpServlet {
                 String destination = d.getDestination();
                 Journey j2 = new Journey();
                 int distance = j2.getDistance(address, destination);
-                
+
                 String driversRegistration = driverReg;
                 Date date = d.getDate();
                 Time time = d.getTime();
@@ -90,42 +87,38 @@ public class PrepareJobsController extends HttpServlet {
                 int customerID = tempInv.getCustomerID();
 
                 Journey j = new Journey(destination, distance, customerID, driversRegistration, date, time);
-                Price tempPrice = new Price();
 
+                Price tempPrice = new Price();
                 int jID = -1;
                 try {
                     jID = j.WriteToDB();
-                } catch (SQLException ex) {
-                    Logger.getLogger(PrepareJobsController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                try {
-                    tempInv.setPrice(tempPrice.GetPrice(distance));
+                    
+                    tempPrice = new Price(distance);
+                    tempInv.setPrice(tempPrice.getPrice());
                     tempInv.setConfirmed(true);
                     tempInv.Update();
+                    
                     d.setStatus("Confirmed");
                     d.Update();
-                    invoices.add(tempInv);
+                    
                 } catch (Exception e) {
                     System.out.println(e);
                 }
             }
         }
 
-        request.setAttribute("invoices", invoices);
-
         Driver driv = new Driver();
-        ArrayList<Driver> drivers = new ArrayList<Driver>();//dem.List();
+        ArrayList<Driver> drivers;//dem.List();
         drivers = driv.List();
         request.setAttribute("drivers", drivers);
 
         Demand deman = new Demand();
-        ArrayList<Demand> demandss = new ArrayList<Demand>();//dem.List();
-        demandss = deman.list();
+        ArrayList<Demand> demandss;//dem.List();
+        demandss = deman.listOutstandingDemands();
         request.setAttribute("demands", demandss);
 
         Journey journ = new Journey();
-        ArrayList<Journey> journeys = new ArrayList<Journey>();//dem.List();
+        ArrayList<Journey> journeys;//dem.List();
         journeys = journ.List();
         request.setAttribute("journeys", journeys);
 

@@ -234,6 +234,61 @@ public class Demand {
         return results;
     }
 
+    public ArrayList<Demand> listOutstandingDemands() {
+
+        ArrayList<Demand> results = new ArrayList<Demand>();
+
+        Connection con;
+        Statement state;
+        ResultSet rs;
+
+        Properties p = new Properties();
+
+        try {
+
+            Class.forName(p.Driver());
+            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
+            state = con.createStatement();
+            String query = GetOutstandingQuery();
+
+            if (!"".equals(query)) {
+
+                rs = state.executeQuery(query);
+
+                int id = -1;
+                String nam = "";
+                String add = "";
+                String destination = "";
+                Date date;
+                Time time;
+                String status = "";
+
+                while (rs.next()) {
+                    id = rs.getInt("ID");
+                    nam = rs.getString("Name");
+                    add = rs.getString("Address");
+                    destination = rs.getString("Destination");
+                    date = rs.getDate("Date");
+                    time = rs.getTime("Time");
+                    status = rs.getString("Status");
+
+                    Demand d = new Demand(id, nam, add, destination, date, time, status);
+                    results.add(d);
+                }
+
+                rs.close();
+                state.close();
+                con.close();
+
+                return results;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        };
+        return results;
+    }
+
     public boolean Update() {
         Connection con;
         Statement state;
@@ -339,6 +394,26 @@ public class Demand {
         query = query + "SELECT * FROM Demands";
         query = query + " WHERE Name LIKE '%" + nam + "%'";
         query = query + " AND Address LIKE '%" + add + "%';";
+
+        return query;
+    }
+
+    public String GetOutstandingQuery() {
+        String nam = getName();
+        String add = getAddress();
+
+        if (nam != null) {
+        } else {
+            nam = "";
+        }
+        if (add != null) {
+        } else {
+            add = "";
+        }
+
+        String query = "";
+        query = query + "SELECT * FROM Demands";
+        query = query + " WHERE Status LIKE 'Outstanding'" + ";";
 
         return query;
     }
