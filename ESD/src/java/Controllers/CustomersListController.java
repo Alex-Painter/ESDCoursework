@@ -26,6 +26,7 @@ public class CustomersListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ArrayList<Customer> customers = new ArrayList<Customer>();
         ArrayList<Double> prices = new ArrayList<Double>();
+        ArrayList<Boolean> isConfirmeds = new ArrayList<Boolean>();
 
         Customer customer = new Customer();
         customers = customer.List();
@@ -34,8 +35,10 @@ public class CustomersListController extends HttpServlet {
             Invoice custInv = new Invoice();
             custInv.GetInvoiceFromCustomerID(cust.getID());
             prices.add(custInv.getPrice());
+            isConfirmeds.add(custInv.getConfirmed());
         }
 
+        request.setAttribute("isConfirmeds", isConfirmeds);
         request.setAttribute("customers", customers);
         request.setAttribute("prices", prices);
         getServletContext().getRequestDispatcher("/WEB-INF/customersList.jsp").forward(request, response);

@@ -80,7 +80,18 @@
                                         <td>${customer.getID()}</td>
                                         <td>${customer.getName()}</td>
                                         <td>${customer.getAddress()}</td>
-                                        <td>${prices[status.index]}</td>
+                                        <td>
+                                            
+                                            <c:choose>
+                                                <c:when test="${isConfirmeds[status.index]}">
+                                                    Confirmed!!!
+                                                </c:when>
+                                                    <c:otherwise>
+                                                        not?
+                                                    </c:otherwise>
+                                            </c:choose>
+                                            ${prices[status.index]}
+                                        </td>
                                         <!--td><a href="#"><span class="glyphicon glyphicon-align-right"/></a></td-->
                                     </tr>
                                 </c:forEach>
