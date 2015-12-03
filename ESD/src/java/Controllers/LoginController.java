@@ -5,11 +5,8 @@
  */
 package Controllers;
 
-import Database.LoginResult;
 import Models.Driver;
-import Models.User;
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
@@ -26,9 +23,11 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String registration = request.getParameter("username");
+        //Get login details
+        String registration = request.getParameter("registration");
         String password = request.getParameter("password");
 
+        //create driver object from details
         Driver driv;
         driv = new Driver();
         driv.setRegistration(registration);

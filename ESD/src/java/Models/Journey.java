@@ -45,7 +45,7 @@ public class Journey {
 
     public Journey(int id) {
         this.ID = id;
-        GetDetail();
+        SetDetails();
     }
 
     public Journey(int id, String dest, int dist, int custID, String drivReg, Date date, Time time) {
@@ -70,7 +70,7 @@ public class Journey {
     // </editor-fold>
     // <editor-fold desc="Properties">
     public int getID() {
-        return ID;
+        return this.ID;
     }
 
     public void setID(int ID) {
@@ -86,26 +86,31 @@ public class Journey {
     }
 
     public int getDistance() {
-        return Distance;
+        return this.Distance;
     }
 
+    //calculates distance between two locations by google API
     public int getDistance(String start, String end) throws MalformedURLException, IOException {
         try {
-
             start = start.replace(" ", "%20");
             end = end.replace(" ", "%20");
 
             String Surl = "https://maps.googleapis.com/maps/api/distancematrix/xml?"
                     + "origins=" + start
                     + "&destinations=" + end;
-            XMLReader jason = null;
-            int o = jason.getDistance(Surl);
+            XMLReader reader = null;
+            int o = reader.getDistance(Surl);
 
-            return o;
+            this.Distance = o;
         } catch (Exception ex) {
             System.out.println(ex);
         }
+        
         return -1;
+    }
+    
+    public void setDistance(int distance) {
+        this.Distance = distance;
     }
 
     public int getCustomerID() {
@@ -151,12 +156,12 @@ public class Journey {
     // </editor-fold>
     // <editor-fold desc="GetDetail">
     public void calculatePricing(int distance) throws SQLException, ClassNotFoundException {
-        Price p = new Price();
-        p = p.GetDetail();
-        setJourneyPrice(p.GetPrice(distance));
+        Price p = new Price(distance);
+        setJourneyPrice(p.getPrice());
     }
 
-    public Journey GetDetail() {
+    //set driver details by registration
+    public void SetDetails() {
 
         Connection con;
         Statement state;
@@ -170,7 +175,7 @@ public class Journey {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetDetailQuery();
+            String query = GetDetailsByIDQuery();
             if (query.length() > 0) {
 
                 rs = state.executeQuery(query);
@@ -200,19 +205,18 @@ public class Journey {
                 con.close();
 
                 if (rowCount == 1) {
-                    return new Journey(id, dest, dist, custID, drivReg, date, time);
-                } else {
-                    return new Journey();
+                    setID(id);
+                    setDestination(dest);
+                    setDistance(dist);
+                    setCustomerID(custID);
+                    setDriversRegistration(drivReg);
+                    setDate(date);
+                    setTime(time);
                 }
-            } else {
-                return new Journey();
             }
-
         } catch (Exception e) {
             System.err.println("Error: " + e);
         }//tryerrr
-
-        return new Journey();
     }
 
     // </editor-fold>
@@ -273,7 +277,7 @@ public class Journey {
         return results;
     }
 
-    public ArrayList<Journey> ListByDate(Date dateToUse) {
+    public ArrayList<Journey> ListByDate(Date dateFilter) {
 
         ArrayList<Journey> results = new ArrayList<Journey>();
 
@@ -289,7 +293,7 @@ public class Journey {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetListByDateQuery(dateToUse);
+            String query = GetListByDateQuery(dateFilter);
 
             if (!"".equals(query)) {
 
@@ -333,6 +337,7 @@ public class Journey {
     // <editor-fold desc="WriteToDB">
     public int WriteToDB() throws SQLException {
         int id = -1;
+        
         try {
             Properties p;
             p = new Properties();
@@ -340,51 +345,25 @@ public class Journey {
             String query = GetWriteToDBQuery();
             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             int affectedRows = statement.executeUpdate();
+            
             if (affectedRows == 1) {
                 ResultSet generatedKeys = statement.getGeneratedKeys();
+                
                 if (generatedKeys.next()) {
                     id = (generatedKeys.getInt(1));
-                } else {
-
                 }
             }
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
+        
         return id;
     }
-
-//        Connection con;
-//        Statement state;
-//
-//        Properties p;
-//        p = new Properties();
-//
-//        boolean result = false;
-//
-//        try {
-//
-//            Class.forName(p.Driver());
-//            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-//            state = con.createStatement();
-//            String query = GetWriteToDBQuery();
-//
-//            state.executeUpdate(query);
-//
-//            result = true;
-//
-//            state.close();
-//            con.close();
-//
-//        } catch (Exception e) {
-//            System.err.println("Error: " + e);
-//        };
-//        return result;
-    //}
+    
+    
     // </editor-fold>
     // <editor-fold desc="Update">
     public boolean Update() {
-
         Connection con;
         Statement state;
 
@@ -417,7 +396,6 @@ public class Journey {
     // </editor-fold>
     // <editor-fold desc="Delete">
     public boolean Delete() {
-
         Connection con;
         Statement state;
 
@@ -425,14 +403,12 @@ public class Journey {
         p = new Properties();
 
         try {
-
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
             String query = GetDeleteQuery();
 
             if (!"".equals(query)) {
-
                 state.executeUpdate(query);
 
                 state.close();
@@ -440,67 +416,15 @@ public class Journey {
 
                 return true;
             }
-
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
+        
         return false;
     }
     // </editor-fold>
     // <editor-fold desc="DB">
-
-    public String GetListQuery() {
-
-        String dest = getDestination();
-        int dist = getDistance();
-        String distStr = "Distance";
-        int custID = getCustomerID();
-        String custIDStr = "Customers.id";
-        String drivReg = getDriversRegistration();
-        Date date = getDate();
-        String dateStr = "Date";
-        Time time = getTime();
-        String timeStr = "Time";
-
-        if (dest != null) {
-        } else {
-            dest = "";
-        }
-        if (drivReg != null) {
-        } else {
-            drivReg = "";
-        }
-        if (date != null) {
-            dateStr = "'" + date.toString() + "'";
-        } else {
-        }
-        if (time != null) {
-            timeStr = "'" + time.toString() + "'";
-        } else {
-        }
-        if (dist > 0) {
-            distStr = Integer.toString(dist);
-        } else {
-        }
-        if (custID > 0) {
-            custIDStr = Integer.toString(custID);
-        } else {
-        }
-
-        String query = "";
-        query = query + "SELECT * FROM Journey;";
-//        query = query + " WHERE Destination LIKE '%" + dest + "%'";
-//        query = query + " AND Distance = " + distStr;
-//        query = query + " AND Customer.id = " + custIDStr;
-//        query = query + " AND Drivers.Registration = '%" + drivReg + "%'";
-//        query = query + " AND Date = " + dateStr + "";
-//        query = query + " AND Time = " + timeStr + ";";
-
-        return query;
-    }
-
     public String GetWriteToDBQuery() {
-
         String dest = getDestination();
         int dist = getDistance();
         String distStr = "Distance";
@@ -559,34 +483,28 @@ public class Journey {
         String dateStr = "";
         Time time = getTime();
         String timeStr = "";
-        if (dest != null) {
-        } else {
+        if (dest == null) {
             dest = "";
         }
-        if (drivReg != null) {
-        } else {
+        if (drivReg == null) {
             drivReg = "";
         }
-        if (date != null) {
+        if (date == null) {
             dateStr = "'" + date.toString() + "'";
-        } else {
         }
-        if (time != null) {
+        if (time == null) {
             timeStr = "'" + time.toString() + "'";
-        } else {
         }
         if (dist > 0) {
             distStr = Integer.toString(dist);
-        } else {
-        }
+        } 
         if (custID > 0) {
             custIDStr = Integer.toString(custID);
-        } else {
         }
 
         String query = "";
+        
         if (id > 0) {
-
             query = query + "UPDATE Journey";
             query = query + " SET Destination = '" + dest + "', Distance = " + distStr + ", Custromer.id = " + custIDStr;
             query = query + ", Drivers.Registration = '" + drivReg + "', Date = " + dateStr + ", Time = " + timeStr + ";";
@@ -597,7 +515,6 @@ public class Journey {
     }
 
     public String GetDeleteQuery() {
-
         String query = "";
         int id = getID();
 
@@ -610,25 +527,19 @@ public class Journey {
 
         return query;
     }
+    
+    public String GetListQuery() {
+        String query = "SELECT * FROM Journey;";
+        return query;
+    }
 
-    public String GetDetailQuery() {
-
-        int id = getID();
-
-        String query = "";
-
-        query = query + "SELECT * FROM Journey";
-        query = query + " WHERE id = " + id + ";";
-
+    public String GetDetailsByIDQuery() {
+        String query = "SELECT * FROM Journey WHERE id = " + getID() + ";";
         return query;
     }
 
     public String GetListByDateQuery(Date date) {
-
-        int id = getID();
-        String query = "";
-
-        query = "SELECT * FROM Journey WHERE Date='" + date + "';";
+        String query = "SELECT * FROM Journey WHERE Date='" + date + "';";
         return query;
     }
     // </editor-fold>

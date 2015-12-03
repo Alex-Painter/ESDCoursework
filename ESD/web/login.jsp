@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <input class="form-control" placeholder="Username" type="text" name="username">
+                                        <input class="form-control" placeholder="Username" type="text" name="registration">
                                     </div>
                                     <div class="form-group">
                                         <input class="form-control" placeholder="Password" type="password" name="password">

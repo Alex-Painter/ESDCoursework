@@ -16,16 +16,13 @@ import javax.servlet.http.*;
  * @author Charlie
  */
 public class ChangeDistancePriceController extends HttpServlet {
-
     public ChangeDistancePriceController() {
         super();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        if (Parent.CheckLoggedIn(request, response)) {
-
+        if (Authenticate.CheckLoggedIn(request, response)) {
             ArrayList<Price> prices = new ArrayList<Price>();
             Price price = new Price();
             prices = price.List();
@@ -33,16 +30,12 @@ public class ChangeDistancePriceController extends HttpServlet {
             request.setAttribute("prices", prices);
 
             getServletContext().getRequestDispatcher("/WEB-INF/changeDistancePrice.jsp").forward(request, response);
-
         }
-
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        if (Parent.CheckLoggedIn(request, response)) {
-
+        if (Authenticate.CheckLoggedIn(request, response)) {
             Object minDistObj = request.getParameter("minDist");
             Object maxDistObj = request.getParameter("maxDist");
             Object priceAlterObj = request.getParameter("priceAlter");
@@ -66,6 +59,7 @@ public class ChangeDistancePriceController extends HttpServlet {
                 if (maxIsInt) {
                     maxDist = Integer.parseInt(maxDistStr);
                 }
+                
                 priceAlter = Double.parseDouble(priceAlterStr);
 
                 Price p = new Price();
