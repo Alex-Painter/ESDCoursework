@@ -5,11 +5,8 @@
  */
 package Controllers;
 
-import Database.LoginResult;
 import Models.Driver;
-import Models.User;
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 

@@ -157,8 +157,7 @@ public class Journey {
     // <editor-fold desc="GetDetail">
     public void calculatePricing(int distance) throws SQLException, ClassNotFoundException {
         Price p = new Price(distance);
-        
-        setJourneyPrice(p.CalculatePrice(distance));
+        setJourneyPrice(p.getPrice());
     }
 
     //set driver details by registration
@@ -176,7 +175,7 @@ public class Journey {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetListByIDQuery();
+            String query = GetDetailsByIDQuery();
             if (query.length() > 0) {
 
                 rs = state.executeQuery(query);
@@ -534,7 +533,7 @@ public class Journey {
         return query;
     }
 
-    public String GetListByIDQuery() {
+    public String GetDetailsByIDQuery() {
         String query = "SELECT * FROM Journey WHERE id = " + getID() + ";";
         return query;
     }
