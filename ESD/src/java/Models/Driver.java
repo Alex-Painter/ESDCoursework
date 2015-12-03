@@ -5,7 +5,6 @@
  */
 package Models;
 
-import static Controllers.Authenticator.GetQuery;
 import Database.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,7 +29,7 @@ public class Driver {
 
     public Driver(String reg) {
         this.Registration = reg;
-        GetDetail();
+        setDetails();
     }
 
     public Driver(String reg, String name, String pass) {
@@ -64,10 +63,9 @@ public class Driver {
     public void setPassword(String Password) {
         this.Password = Password;
     }
-
     // </editor-fold>
-    // <editor-fold desc="GetDetail">
-    public Driver GetDetail() {
+    // <editor-fold desc="setDetails">
+    public void setDetails() {
         if (!"".equals(getRegistration())) {
             Connection con;
             Statement state;
@@ -81,9 +79,9 @@ public class Driver {
                 Class.forName(p.Driver());
                 con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
                 state = con.createStatement();
-                String query = GetQuery(getRegistration(), getPassword());
+                String query = GetDriverDetailsQuery(getRegistration());
+                
                 if (query.length() > 0) {
-
                     rs = state.executeQuery(query);
 
                     String reg = "";
@@ -103,19 +101,16 @@ public class Driver {
                     con.close();
 
                     if (rowCount == 1) {
-                        return new Driver(reg, name, pass);
-                    } else {
-                        return new Driver();
-                    }
-                } else {
-                    return new Driver();
-                }
+                        setName(name);
+                        setPassword(pass);
+                        setRegistration(reg);
+                    } 
+                } 
 
             } catch (Exception e) {
                 System.err.println("Error: " + e);
             }//tryerrr
         }
-        return new Driver();
     }
 
     // </editor-fold>
@@ -262,9 +257,13 @@ public class Driver {
     }
     // </editor-fold>
     // <editor-fold desc="DB">
-
     public String GetLogInQuery(String username, String password) {
         String query = "SELECT * FROM Drivers WHERE Registration = '" + username + "' AND password = '" + password + "';";
+        return query;
+    }
+    
+    public String GetDriverDetailsQuery(String registration) {
+        String query = "SELECT * FROM Drivers WHERE Registration = '" + registration + "';";
         return query;
     }
 
@@ -274,16 +273,13 @@ public class Driver {
         String nam = getName();
         String pas = getPassword();
 
-        if (reg != null) {
-        } else {
+        if (reg == null) {
             reg = "";
         }
-        if (nam != null) {
-        } else {
+        if (nam == null) {
             nam = "";
         }
-        if (pas != null) {
-        } else {
+        if (pas == null) {
             pas = "";
         }
 
@@ -423,5 +419,4 @@ public class Driver {
 
     }
     // </editor-fold>
-
 }

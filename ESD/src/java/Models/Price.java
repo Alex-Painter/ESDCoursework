@@ -5,7 +5,6 @@
  */
 package Models;
 
-import static Controllers.Authenticator.GetQuery;
 import Database.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,13 +17,7 @@ import java.util.ArrayList;
  *
  * @author h2-standal
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 public class Price {
-
     private int ID;
     private int Distance;
     private double Price;
@@ -34,9 +27,17 @@ public class Price {
 
     }
 
-    public Price(int distance) {
+    public Price(int distance) throws SQLException, ClassNotFoundException {
+        int max_distance = GetMaxDistance();
+
+        double price = -1.0;
+
+        if (distance > max_distance) {
+            distance = max_distance;
+        }
+        
         this.Distance = distance;
-        GetDetail();
+        SetDetails();
     }
 
     public Price(int priceID, int distance, double price) {
@@ -69,51 +70,7 @@ public class Price {
         this.Price = Price;
     }
 
-    public double GetPrice(int distance) throws SQLException, ClassNotFoundException {
-        int max_distance = GetMaxDistance();
-
-        double price = -1.0;
-
-        if (distance > max_distance) {
-            distance = max_distance;
-        }
-
-        String query = GetPriceQuery(distance);
-
-        Connection con;
-        Statement state;
-        ResultSet rs;
-
-        Properties p;
-        p = new Properties();
-
-        Class.forName(p.Driver());
-        con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-        state = con.createStatement();
-
-        if (query.length() > 0) {
-
-            rs = state.executeQuery(query);
-
-            int rowCount = 0;
-
-            while (rs.next()) {
-                rowCount = rowCount + 1;
-                price = rs.getDouble("Price");
-            }
-
-            rs.close();
-            state.close();
-            con.close();
-
-        }
-
-        return price;
-
-    }
-
     public int GetMaxDistance() throws SQLException, ClassNotFoundException {
-
         int distance = 0;
         String query = GetMaxDistanceQuery();
 
@@ -129,7 +86,6 @@ public class Price {
         state = con.createStatement();
 
         if (query.length() > 0) {
-
             rs = state.executeQuery(query);
 
             int rowCount = 0;
@@ -137,6 +93,7 @@ public class Price {
             while (rs.next()) {
                 rowCount = rowCount + 1;
                 distance = rs.getInt("Distance");
+                
                 if (rowCount == 1) {
                     rs.close();
                     state.close();
@@ -144,8 +101,9 @@ public class Price {
                     return distance;
                 }
             }
-
+            
             rs.close();
+
             if (rowCount == 1) {
                 state.close();
                 con.close();
@@ -156,7 +114,6 @@ public class Price {
         state.close();
         con.close();
         return distance;
-
     }
 
     public boolean ChangeDistancePrice(int minDistance, int maxDistance, double priceIncrease) {
@@ -167,14 +124,12 @@ public class Price {
         p = new Properties();
 
         try {
-
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
             String query = GetUpdateDistancePriceQuery(minDistance, maxDistance, priceIncrease);
 
             if (!"".equals(query)) {
-
                 state.executeUpdate(query);
 
                 state.close();
@@ -182,16 +137,15 @@ public class Price {
 
                 return true;
             }
-
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
+        
         return false;
     }
-
     // </editor-fold>
-    // <editor-fold desc="GetDetail">
-    public Price GetDetail() {
+    // <editor-fold desc="SetDetails">
+    public void SetDetails() {
         if (!"".equals(getDistance())) {
             Connection con;
             Statement state;
@@ -201,13 +155,12 @@ public class Price {
             p = new Properties();
 
             try {
-
                 Class.forName(p.Driver());
                 con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
                 state = con.createStatement();
-                String query = GetDetailQuery();
+                String query = GetDetailsByDistanceQuery();
+                
                 if (query.length() > 0) {
-
                     rs = state.executeQuery(query);
 
                     int distance = -1;
@@ -227,25 +180,19 @@ public class Price {
                     con.close();
 
                     if (rowCount == 1) {
-                        return new Price(distance, priceID, price);
-                    } else {
-                        return new Price();
+                        setDistance(distance);
+                        setPrice(priceID);
+                        setPrice(price);
                     }
-                } else {
-                    return new Price();
                 }
-
             } catch (Exception e) {
                 System.err.println("Error: " + e);
             }//tryerrr
         }
-        return new Price();
     }
-
     // </editor-fold>
     // <editor-fold desc="List">
     public ArrayList<Price> List() {
-
         ArrayList<Price> results = new ArrayList<Price>();
 
         Connection con;
@@ -256,14 +203,12 @@ public class Price {
         p = new Properties();
 
         try {
-
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
             String query = GetListQuery();
 
             if (!"".equals(query)) {
-
                 rs = state.executeQuery(query);
 
                 int distance = -1;
@@ -284,124 +229,20 @@ public class Price {
 
                 return results;
             }
-
         } catch (Exception e) {
             System.err.println("Error: " + e);
         };
+        
         return results;
-    }
-
-    // </editor-fold>
-    // <editor-fold desc="WriteToDB">
-    public boolean WriteToDB() {
-
-        Connection con;
-        Statement state;
-
-        Properties p;
-        p = new Properties();
-
-        boolean result = false;
-
-        try {
-
-            Class.forName(p.Driver());
-            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-            state = con.createStatement();
-            String query = GetWriteToDBQuery();
-
-            state.executeUpdate(query);
-
-            result = true;
-
-            state.close();
-            con.close();
-
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-        };
-        return result;
-    }
-
-    // </editor-fold>
-    // <editor-fold desc="Update">
-    public boolean Update() {
-
-        Connection con;
-        Statement state;
-
-        Properties p;
-        p = new Properties();
-
-        try {
-
-            Class.forName(p.Driver());
-            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-            state = con.createStatement();
-            String query = GetUpdateQuery();
-
-            if (!"".equals(query)) {
-
-                state.executeUpdate(query);
-
-                state.close();
-                con.close();
-
-                return true;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-        };
-        return false;
-    }
-
-    // </editor-fold>
-    // <editor-fold desc="Delete">
-    public boolean Delete() {
-
-        Connection con;
-        Statement state;
-
-        Properties p;
-        p = new Properties();
-
-        try {
-
-            Class.forName(p.Driver());
-            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-            state = con.createStatement();
-            String query = GetDeleteQuery();
-
-            if (!"".equals(query)) {
-
-                state.executeUpdate(query);
-
-                state.close();
-                con.close();
-
-                return true;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error: " + e);
-        };
-        return false;
     }
     // </editor-fold>
     // <editor-fold desc="DB">
-
-    public String GetLogInQuery(String username, String password) {
-        String query = "SELECT * FROM Drivers WHERE Registration = '" + username + "' AND password = '" + password + "';";
-        return query;
-    }
-
     public String GetMaxDistanceQuery() {
         String query = "SELECT * FROM PriceList ORDER BY Distance DESC;";
         return query;
     }
 
-    public String GetPriceQuery(int distance) {
+    public String CalculatePriceQuery(int distance) {
         String query = "SELECT * FROM PriceList WHERE Distance = " + distance + ";";
         return query;
     }
@@ -410,40 +251,8 @@ public class Price {
         return "SELECT * FROM PriceList ORDER BY Distance;";
     }
 
-    public String GetWriteToDBQuery() {
-
-//        String distance = getDistance();
-//        String priceID = getID();
-//        String price= getPrice();
-//
-//        if (distance != null) {
-//        } else {
-//            return "";
-//        }
-//        if (priceID != null) {
-//        } else {
-//            priceID = "";
-//        }
-//        if (price != null) {
-//        } else {
-//            price= "";
-//        }
-//
-//        String query = "";
-//
-//        query = query + "INSERT INTO Drivers";
-//        query = query + " (Registration, Name, password)";
-//        query = query + " VALUES";
-//        query = query + " ('" + distance + "','" + priceID + "','" + price+ "');";
-        //return query;
-        return "";
-
-    }
-
     public String GetUpdateDistancePriceQuery(int minDistance, int maxDistance, double priceIncrease) {
-        String query = "";
-
-        query = ""
+        String query = ""
                 + "UPDATE `PriceList`\n"
                 + "\n"
                 + "SET `Price`=`Price` + " + priceIncrease + "\n"
@@ -452,119 +261,14 @@ public class Price {
                 + "AND `Distance` <= " + maxDistance + ";";
 
         return query;
-
     }
 
-    public String GetUpdateQuery() {
-
-//        String distance = getDistance();
-//        String priceID = getID();
-//        String price = getPrice();
-//
-//        if (distance != null) {
-//        } else {
-//            return "";
-//        }
-//        if (priceID != null) {
-//        } else {
-//            priceID = "";
-//        }
-//        if (price != null) {
-//        } else {
-//            price = "";
-//        }
-//
-//        String query = "";
-//
-//        query = query + "UPDATE Drivers";
-//        query = query + " SET Registration = '" + distance + "', Name = '" + priceID + "', password = '" + price + "'";
-//        query = query + " WHERE Registration = '" + distance + "';";
-        //return query;
-        return "";
-
-    }
-
-    public String GetDeleteQuery() {
-
-//        String distance = getID();
-//
-//        if (distance != null) {
-//        } else {
-//            return "";
-//        }
-//
-//        String query = "";
-//
-//        query = query + "DELETE FROM PriceList";
-//        query = query + " WHERE ID = '" + getID() + "';";
-//
-//        return query;
-        return "";
-    }
-
-    public String GetDetailQuery() {
-
+    public String GetDetailsByDistanceQuery() {
         int distance = getDistance();
 
-        String query = "";
-
-        query = query + "SELECT * FROM PriceList";
-        query = query + " WHERE Distance = '" + distance + "';";
+        String query = "SELECT * FROM PriceList WHERE Distance = " + distance + ";";
 
         return query;
     }
     // </editor-fold>
-    // <editor-fold desc="Custom">
-//    public boolean LogIn() {
-//
-//        Connection con;
-//        Statement state;
-//        ResultSet rs;
-//
-//        Properties p;
-//        p = new Properties();
-//
-//        try {
-//
-//            Class.forName(p.Driver());
-//            con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
-//            state = con.createStatement();
-//            String query = GetLogInQuery(getRegistration(), getPassword());
-//            if (query.length() > 0) {
-//
-//                rs = state.executeQuery(query);
-//
-//                String distance = "";
-//                String priceID = "";
-//                String pass = "";
-//                int rowCount = 0;
-//
-//                while (rs.next()) {
-//                    rowCount = rowCount + 1;
-//                    distance = rs.getString("Registration");
-//                    priceID = rs.getString("Name");
-//                    pass = rs.getString("password");
-//                }
-//
-//                rs.close();
-//                state.close();
-//                con.close();
-//
-//                if (rowCount == 1) {
-//                    return true;//new Price(distance, name, pass);
-//                } else {
-//                    return false;//new Price();
-//                }
-//            } else {
-//                return false;//new Price();
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("Error: " + e);
-//            return false;//new Price();
-//        }//tryerrr
-//
-//    }
-    // </editor-fold>
-
 }
