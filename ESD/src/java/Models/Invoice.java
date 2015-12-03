@@ -202,6 +202,7 @@ public class Invoice {
                 int customerID = -1;
                 int demandID = 0;
                 double price = -1.0;
+                Boolean confirmed = false;
 
                 int rowCount = 0;
                 while (rs.next()) {
@@ -209,6 +210,7 @@ public class Invoice {
                     customerID = rs.getInt("CustomerID");
                     demandID = rs.getInt("DemandID");
                     price = rs.getDouble("Price");
+                    confirmed = rs.getBoolean("Confirmed");
 
                 }
                 rs.close();
@@ -218,7 +220,7 @@ public class Invoice {
                     this.setCustomerID(customerID);
                     this.setDemandID(demandID);
                     this.setPrice(price);
-                    //this.setConfirmed(confirmed);
+                    this.setConfirmed(confirmed);
                     //return new Invoice(customerID, demandID, price);
                 }
             }
