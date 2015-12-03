@@ -30,7 +30,7 @@ public class Customer {
 
     public Customer(int id) {
         this.ID = id;
-        GetDetail();
+        setDetails();
     }
 
     public Customer(String name, String address, int id) {
@@ -67,7 +67,7 @@ public class Customer {
 
     // </editor-fold>
     // <editor-fold desc="GetDetail">
-    public Customer GetDetail() {
+    public void setDetails() {
 
         Connection con;
         Statement state;
@@ -81,7 +81,7 @@ public class Customer {
             Class.forName(p.Driver());
             con = DriverManager.getConnection(p.URL(), p.Username(), p.Password());
             state = con.createStatement();
-            String query = GetDetailQuery();
+            String query = GetCustomerDetailsQuery();
             if (query.length() > 0) {
 
                 rs = state.executeQuery(query);
@@ -103,19 +103,14 @@ public class Customer {
                 con.close();
 
                 if (rowCount == 1) {
-                    return new Customer(nam, add, id);
-                } else {
-                    return new Customer();
+                    setName(nam);
+                    setAddress(add);
+                    setID(id);
                 }
-            } else {
-                return new Customer();
             }
-
         } catch (Exception e) {
             System.err.println("Error: " + e);
         }//tryerrr
-
-        return new Customer();
     }
 
     public Customer GetDetailByNameAndAddress() {
@@ -397,14 +392,10 @@ public class Customer {
         return query;
     }
 
-    public String GetDetailQuery() {
-
+    public String GetCustomerDetailsQuery() {
         int id = getID();
 
-        String query = "";
-
-        query = query + "SELECT * FROM Customer";
-        query = query + " WHERE id = '" + id + "';";
+        String query = "SELECT * FROM Customer WHERE id = '" + id + "';";
 
         return query;
     }
