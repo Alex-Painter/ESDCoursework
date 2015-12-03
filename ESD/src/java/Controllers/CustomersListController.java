@@ -28,15 +28,27 @@ public class CustomersListController extends HttpServlet {
         ArrayList<Double> prices = new ArrayList<Double>();
         ArrayList<Boolean> isConfirmeds = new ArrayList<Boolean>();
 
+        ArrayList<Double> noVATs = new ArrayList<Double>();
+        ArrayList<Double> VATs = new ArrayList<Double>();
+
         Customer customer = new Customer();
         customers = customer.List();
-        
-        for (Customer cust : customers){
+
+        for (Customer cust : customers) {
             Invoice custInv = new Invoice();
             custInv.GetInvoiceFromCustomerID(cust.getID());
-            prices.add(custInv.getPrice());
+            double price = custInv.getPrice();
+            double noVAT = price * 0.8;
+            double VAT = price * 0.2;
+
+            noVATs.add(noVAT);
+            VATs.add(VAT);
+
+            prices.add(price);
             isConfirmeds.add(custInv.getConfirmed());
         }
+        request.setAttribute("noVATs", noVATs);
+        request.setAttribute("VATs", VATs);
 
         request.setAttribute("isConfirmeds", isConfirmeds);
         request.setAttribute("customers", customers);
