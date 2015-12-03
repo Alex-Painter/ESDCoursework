@@ -28,7 +28,6 @@ public class BookingController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         int id = 1;
         String name = request.getParameter("name");
         String address = request.getParameter("address");

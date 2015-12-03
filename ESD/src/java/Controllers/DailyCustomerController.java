@@ -30,30 +30,31 @@ public class DailyCustomerController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArrayList<Journey> journeys;
+        if (Authenticate.CheckLoggedIn(request, response)) {
+            ArrayList<Journey> journeys;
 
-        java.sql.Date today;
-        today = new Date(System.currentTimeMillis());
+            java.sql.Date today;
+            today = new Date(System.currentTimeMillis());
 
-        Journey j = new Journey();
-        ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
-        journeys = j.ListByDate(today);
+            Journey j = new Journey();
+            ArrayList<Customer> dailyCustomers = new ArrayList<Customer>();
+            journeys = j.ListByDate(today);
 
-        try {
-            for (Journey journey : journeys) {
-                Customer c = new Customer(journey.getCustomerID());
-                c = c.GetDetail();
-                dailyCustomers.add(c);
+            try {
+                for (Journey journey : journeys) {
+                    Customer c = new Customer(journey.getCustomerID());
+                    c = c.GetDetail();
+                    dailyCustomers.add(c);
 
-                journey.calculatePricing(journey.getDistance());
+                    journey.calculatePricing(journey.getDistance());
+                }
+            } catch (Exception ex) {
+                System.out.println(ex);
             }
-        } catch (Exception ex) {
-            System.out.println(ex);
+            request.setAttribute("customers", dailyCustomers);
+            request.setAttribute("journeys", journeys);
+
+            getServletContext().getRequestDispatcher("/WEB-INF/dailyCustomers.jsp").forward(request, response);
         }
-        request.setAttribute("customers", dailyCustomers);
-        request.setAttribute("journeys", journeys);
-
-        getServletContext().getRequestDispatcher("/WEB-INF/dailyCustomers.jsp").forward(request, response);
     }
-
 }

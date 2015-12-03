@@ -23,47 +23,52 @@ public class DriversListController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArrayList<Driver> drivers = new ArrayList<Driver>();
+        if (Authenticate.CheckLoggedIn(request, response)) {
+            ArrayList<Driver> drivers = new ArrayList<Driver>();
 
-        Driver driver = new Driver();
-        drivers = driver.List();
+            Driver driver = new Driver();
+            drivers = driver.List();
 
-        request.setAttribute("drivers", drivers);
+            request.setAttribute("drivers", drivers);
 
-        getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
+            getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("deletedReg") != null) {
-            Object regToDelete = request.getParameter("deletedReg");
+        if (Authenticate.CheckLoggedIn(request, response)) {
+            if (request.getParameter("deletedReg") != null) {
+                Object regToDelete = request.getParameter("deletedReg");
 
-            if (regToDelete != null && !"".equals(regToDelete)) {
-                ArrayList<Driver> drivers = new ArrayList<Driver>();
-                Driver driver = new Driver();
+                if (regToDelete != null && !"".equals(regToDelete)) {
+                    ArrayList<Driver> drivers = new ArrayList<Driver>();
+                    Driver driver = new Driver();
 
-                driver.setRegistration(regToDelete.toString());
-                driver.Delete();
-                driver.setRegistration("");
-                drivers = driver.List();
+                    driver.setRegistration(regToDelete.toString());
+                    driver.Delete();
+                    driver.setRegistration("");
+                    drivers = driver.List();
 
-                request.setAttribute("drivers", drivers);
+                    request.setAttribute("drivers", drivers);
+                }
+
+            } else if (request.getParameter("newRegistration") != null) {
+                String registration = request.getParameter("newRegistration");
+                String name = request.getParameter("name");
+                String password = request.getParameter("password");
+                Driver newDriver = new Driver(registration, name, password);
+
+                if (newDriver.WriteToDB()) {
+                    ArrayList<Driver> drivers = new ArrayList<Driver>();
+                    Driver driver = new Driver("", "", "");
+                    drivers = driver.List();
+
+                    request.setAttribute("drivers", drivers);
+                }
             }
-
-        } else if (request.getParameter("newRegistration") != null) {
-            String registration = request.getParameter("newRegistration");
-            String name = request.getParameter("name");
-            String password = request.getParameter("password");
-            Driver newDriver = new Driver(registration, name, password);
-
-            if (newDriver.WriteToDB()) {
-                ArrayList<Driver> drivers = new ArrayList<Driver>();
-                Driver driver = new Driver("", "", "");
-                drivers = driver.List();
-
-                request.setAttribute("drivers", drivers);
-            }
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
         }
-        getServletContext().getRequestDispatcher("/WEB-INF/driversList.jsp").forward(request, response);
     }
 }

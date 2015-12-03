@@ -18,14 +18,16 @@ public class Authenticate {
     public static boolean CheckLoggedIn(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         
+        boolean valid = true;
+        
         //if invalid session
         if (session.getAttribute("id") == null) {
             //redirect to login page
             response.sendRedirect("login.jsp");
             
-            return false;
+            valid = false;
         }
         
-        return true;
+        return valid;
     }
 }
