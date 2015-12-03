@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" session="true"%>
 <!DOCTYPE html>
 <html>
@@ -29,6 +30,31 @@
                 background-color: #f0f0f0;
             }
         </style>
+
+
+
+        <script type='text/javascript'>
+            function DisplayInvoiceFor(CustomerID) {
+                var divID = 'invoiceFor' + CustomerID;
+                var invoice = document.getElementById(divID);
+                var invoices = document.getElementsByClassName("invoice");
+
+                for (i = 0; i < invoices.length; i++) {
+                    if (invoices[i].id !== divID) {
+                        invoices[i].style.display = "none";
+                    }
+                }
+
+                ToggleVisibility(invoice);//.setAttribute("style", "");
+            }
+            function ToggleVisibility(invoice) {
+                if (invoice.getAttribute("style") === "") {
+                    invoice.style.display = "none";
+                } else {
+                    invoice.setAttribute("style", "")
+                }
+            }
+        </script>
 
     </head>
     <body>
@@ -55,6 +81,12 @@
         <hr style="margin-top: 0"/>
 
 
+        <c:forEach items="${customers}" var="customer" varStatus="status">
+
+        </c:forEach>
+
+
+
 
         <div class="row">
             <div class="col-md-12 container">
@@ -75,26 +107,43 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${customers}" var="customer" varStatus="status">
-                                    <tr>
-                                        <td>${customer.getID()}</td>
-                                        <td>${customer.getName()}</td>
-                                        <td>${customer.getAddress()}</td>
-                                        <td>
-                                            
-                                            <c:choose>
-                                                <c:when test="${isConfirmeds[status.index]}">
-                                                    Confirmed!!!
-                                                </c:when>
-                                                    <c:otherwise>
-                                                        not?
-                                                    </c:otherwise>
-                                            </c:choose>
-                                            ${prices[status.index]}
+                            <fmt:setLocale value="en_GB" />
+                            <c:forEach items="${customers}" var="customer" varStatus="status">
+                                <tr>
+                                    <td>${customer.getID()}</td>
+                                    <td>${customer.getName()}</td>
+                                    <td>${customer.getAddress()}</td>
+                                    <td>
+
+                                        <c:choose>
+                                            <c:when test="${isConfirmeds[status.index]}">
+                                                <a href="javascript: DisplayInvoiceFor(${customer.getID()});"><span class="glyphicon glyphicon-list" /></a>
+                                            </c:when>
+                                            <c:otherwise>
+
+                                            </c:otherwise>
+                                        </c:choose>                                            
+                                    </td>
+                                    <!--td><a href="#"><span class="glyphicon glyphicon-align-right"/></a></td-->
+                                </tr>
+                                <c:choose>
+                                    <c:when test="${isConfirmeds[status.index]}">
+                                        <tr style='display:none;' id="invoiceFor${customer.getID()}" class="invoice">
+                                            <td colspan="4">
+                                        <big><strong>Invoice</strong></big><br/>
+                                        <strong>Customer Name:</strong> ${customer.getName()}<br/>
+                                        <strong>Customer Address:</strong> ${customer.getAddress()}<br/>
+                                        <strong>Price:</strong> <fmt:formatNumber value="${noVATs[status.index]}" type="currency" /><br/>
+                                        <strong>VAT:</strong> <fmt:formatNumber value="${VATs[status.index]}" type="currency" /><br/>
+                                        <strong>Total Price:</strong> <fmt:formatNumber value="${prices[status.index]}" type="currency" />                                                      
                                         </td>
-                                        <!--td><a href="#"><span class="glyphicon glyphicon-align-right"/></a></td-->
-                                    </tr>
-                                </c:forEach>
+                                        </tr>
+                                    </c:when>
+                                    <c:otherwise>
+
+                                    </c:otherwise>
+                                </c:choose> 
+                            </c:forEach>
                             </tbody>
                         </table>
                     </div>
